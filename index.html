@@ -12,7 +12,7 @@
   <div id="login-card" class="min-h-screen flex items-center justify-center p-4">
     <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
       <h1 class="text-2xl font-bold text-slate-800 mb-2">¡Bienvenido!</h1>
-      <p class="text-slate-500 text-sm mb-6">Inicia sesión o regístrate para acceder a los módulos</p>
+      <p class="text-slate-500 text-sm mb-6">Inicia sesión o regístrate para acceder a los cursos</p>
 
       <button id="btn-google" class="w-full border border-slate-300 py-3 rounded-xl flex items-center justify-center gap-3 hover:bg-slate-50 transition font-medium text-slate-700 mb-4">
         <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
@@ -42,7 +42,7 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
         <div class="flex items-center gap-3">
           <span class="text-2xl font-black text-blue-600 tracking-wider">CEMA</span>
-          <span class="text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-semibold">Matemática</span>
+          <span class="text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-semibold">Plataforma Educativa</span>
         </div>
         
         <div class="flex items-center gap-4">
@@ -59,16 +59,86 @@
 
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
       
-      <!-- VISTA A: PANEL PRINCIPAL CON LOS 4 MÓDULOS -->
-      <div id="view-dashboard">
+      <!-- NIVEL 1: SELECCIÓN DE CURSO -->
+      <div id="view-courses">
         <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 sm:p-8 text-white mb-8 shadow-lg">
-          <h2 class="text-2xl sm:text-3xl font-bold mb-2">¡Bienvenido a tu curso de Matemática! 👋</h2>
+          <h2 class="text-2xl sm:text-3xl font-bold mb-2">¡Bienvenido a CEMA! 👋</h2>
           <p class="text-blue-100 text-sm sm:text-base max-w-2xl">
-            Selecciona un módulo para explorar sus Objetivos de Aprendizaje (OA) y acceder al material didáctico.
+            Selecciona tu curso para acceder a los contenidos y módulos de estudio disponibles.
           </p>
         </div>
 
-        <h3 class="text-lg font-bold text-slate-800 mb-4">Módulos de Aprendizaje</h3>
+        <h3 class="text-lg font-bold text-slate-800 mb-4">Selecciona tu Curso</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          
+          <!-- 7mo Básico -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition text-center flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center font-bold text-lg mx-auto mb-4">7°</div>
+              <h4 class="text-lg font-bold text-slate-800 mb-2">7mo Básico</h4>
+              <p class="text-slate-500 text-xs mb-6">Contenidos y módulos interactivos de 7mo Básico.</p>
+            </div>
+            <button class="w-full bg-slate-100 text-slate-400 font-medium py-2.5 rounded-xl text-sm cursor-not-allowed" disabled>
+              Próximamente
+            </button>
+          </div>
+
+          <!-- 8vo Básico -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition text-center flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center font-bold text-lg mx-auto mb-4">8°</div>
+              <h4 class="text-lg font-bold text-slate-800 mb-2">8vo Básico</h4>
+              <p class="text-slate-500 text-xs mb-6">Contenidos y módulos interactivos de 8vo Básico.</p>
+            </div>
+            <button class="w-full bg-slate-100 text-slate-400 font-medium py-2.5 rounded-xl text-sm cursor-not-allowed" disabled>
+              Próximamente
+            </button>
+          </div>
+
+          <!-- 1ro Medio (Activo) -->
+          <div class="bg-white rounded-2xl border-2 border-blue-500 p-6 shadow-md hover:shadow-lg transition text-center flex flex-col justify-between relative overflow-hidden">
+            <span class="absolute top-3 right-3 bg-blue-100 text-blue-700 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">Disponible</span>
+            <div>
+              <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-lg mx-auto mb-4">1°</div>
+              <h4 class="text-lg font-bold text-slate-800 mb-2">1ro Medio</h4>
+              <p class="text-slate-500 text-xs mb-6">Accede a los 4 módulos de aprendizaje y sus 15 OA.</p>
+            </div>
+            <button id="btn-select-1medio" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-xl transition text-sm shadow-sm">
+              Ingresar al Curso
+            </button>
+          </div>
+
+          <!-- 2do Medio -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition text-center flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center font-bold text-lg mx-auto mb-4">2°</div>
+              <h4 class="text-lg font-bold text-slate-800 mb-2">2do Medio</h4>
+              <p class="text-slate-500 text-xs mb-6">Contenidos y módulos interactivos de 2do Medio.</p>
+            </div>
+            <button class="w-full bg-slate-100 text-slate-400 font-medium py-2.5 rounded-xl text-sm cursor-not-allowed" disabled>
+              Próximamente
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- NIVEL 2: MÓDULOS DE 1RO MEDIO -->
+      <div id="view-dashboard" class="hidden">
+        
+        <button id="btn-volver-cursos" class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-semibold mb-6 transition">
+          ← Volver a Selección de Cursos
+        </button>
+
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 sm:p-8 text-white mb-8 shadow-lg">
+          <span class="text-xs bg-blue-500 text-white px-3 py-1 rounded-full font-semibold uppercase tracking-wide">1ro Medio</span>
+          <h2 class="text-2xl sm:text-3xl font-bold mt-2 mb-2">Módulos de Aprendizaje</h2>
+          <p class="text-blue-100 text-sm sm:text-base max-w-2xl">
+            Selecciona un módulo para explorar sus Objetivos de Aprendizaje (OA) y material didáctico.
+          </p>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           
           <!-- Módulo 1 -->
@@ -115,11 +185,11 @@
       </div>
 
 
-      <!-- VISTA B: CONTENIDO DEL MÓDULO SELECCIONADO -->
+      <!-- NIVEL 3: DETALLE DE MÓDULO Y OBJETIVOS -->
       <div id="view-module-detail" class="hidden">
         
         <button id="btn-volver-dashboard" class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-semibold mb-6 transition">
-          ← Volver a todos los módulos
+          ← Volver a los módulos de 1ro Medio
         </button>
 
         <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm mb-8">
@@ -128,13 +198,11 @@
           <p id="mod-desc" class="text-slate-600 text-sm sm:text-base">Selecciona un Objetivo de Aprendizaje a continuación para desplegar el material didáctico.</p>
         </div>
 
-        <!-- LISTA DE BOTONES DE OBJETIVOS -->
         <h3 class="text-lg font-bold text-slate-800 mb-4">Objetivos de Aprendizaje (OA)</h3>
         <div id="oa-buttons-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          <!-- Los botones se generan dinámicamente -->
+          <!-- Botones dinámicos -->
         </div>
 
-        <!-- VISTA DEL MATERIAL DIDÁCTICO -->
         <div id="oa-content-box" class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
           <div id="oa-content-default" class="text-center py-12 text-slate-400">
             <p class="text-base font-medium">Haz clic en alguno de los Objetivos de Aprendizaje superiores para ver su material didáctico.</p>
@@ -144,7 +212,7 @@
             <p id="oa-desc" class="text-slate-600 text-sm">Material explicativo para este objetivo de aprendizaje.</p>
             
             <div id="oa-material-container" class="bg-slate-50 p-6 rounded-xl border border-slate-200 mt-4 space-y-3">
-              <!-- Aquí van los recursos (videos, PDFs, links) -->
+              <!-- Materiales -->
             </div>
           </div>
         </div>
@@ -177,25 +245,15 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // BASE DE DATOS DE MÓDULOS Y OBJETIVOS (OA)
+    // MÓDULOS DE 1RO MEDIO
     const modulesData = {
       mod1: {
         tag: "Módulo 01",
         title: "Módulo 1: Números",
         desc: "Aprende operaciones fundamentales con números racionales y potencias.",
         oas: [
-          {
-            id: "oa1",
-            title: "OA 1: Cuestiones de cálculo con números racionales",
-            desc: "Conceptos, operaciones combinadas y simplificación de fracciones.",
-            material: "<p class='text-sm text-slate-600 mb-2'>Material sugerido para OA 1:</p><a href='#' target='_blank' class='inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs px-4 py-2 rounded-lg transition'>📄 Descargar Guía OA 1 (PDF)</a>"
-          },
-          {
-            id: "oa2",
-            title: "OA 2: Potencias de base racional y exponente entero",
-            desc: "Propiedades de las potencias, multiplicación y división con exponente entero.",
-            material: "<p class='text-sm text-slate-600 mb-2'>Material sugerido para OA 2:</p><a href='#' target='_blank' class='inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs px-4 py-2 rounded-lg transition'>🎥 Ver Video Explicativo OA 2</a>"
-          }
+          { id: "oa1", title: "OA 1: Cálculo con números racionales", desc: "Conceptos, operaciones combinadas y simplificación de fracciones.", material: "<p class='text-sm text-slate-600 mb-2'>Material sugerido para OA 1:</p><a href='#' target='_blank' class='inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs px-4 py-2 rounded-lg transition'>📄 Descargar Guía OA 1 (PDF)</a>" },
+          { id: "oa2", title: "OA 2: Potencias de base racional y exponente entero", desc: "Propiedades de las potencias, multiplicación y división con exponente entero.", material: "<p class='text-sm text-slate-600 mb-2'>Material sugerido para OA 2:</p><a href='#' target='_blank' class='inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs px-4 py-2 rounded-lg transition'>🎥 Ver Video Explicativo OA 2</a>" }
         ]
       },
       mod2: {
@@ -236,7 +294,7 @@
 
     let currentModuleData = null;
 
-    // ESTADO DE SESIÓN DE FIREBASE
+    // ESTADO DE SESIÓN
     onAuthStateChanged(auth, (user) => {
       if (user) {
         document.getElementById('login-card').classList.add('hidden');
@@ -248,21 +306,33 @@
       }
     });
 
-    // EVENTO GLOBAL DE CLICS
+    // EVENTOS DE NAVEGACIÓN GLOBAL
     document.addEventListener('click', (e) => {
       
-      // 1. Clic en "Ver Clase" de cualquier módulo
+      // A. Clic en "Ingresar al Curso" (1ro Medio)
+      if (e.target && e.target.id === 'btn-select-1medio') {
+        document.getElementById('view-courses').classList.add('hidden');
+        document.getElementById('view-dashboard').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // B. Clic en "Volver a Selección de Cursos"
+      if (e.target && e.target.id === 'btn-volver-cursos') {
+        document.getElementById('view-dashboard').classList.add('hidden');
+        document.getElementById('view-courses').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // C. Clic en "Ver Clase" (Cualquiera de los 4 módulos de 1ro Medio)
       const btnVer = e.target.closest('.btn-ver-modulo');
       if (btnVer) {
         const modKey = btnVer.getAttribute('data-mod');
         currentModuleData = modulesData[modKey];
 
-        // Cargar títulos e información del módulo
         document.getElementById('mod-tag').innerText = currentModuleData.tag;
         document.getElementById('mod-title').innerText = currentModuleData.title;
         document.getElementById('mod-desc').innerText = currentModuleData.desc;
 
-        // Generar los botones de los OA dinámicamente
         const container = document.getElementById('oa-buttons-container');
         container.innerHTML = '';
 
@@ -274,24 +344,22 @@
           container.appendChild(btn);
         });
 
-        // Resetear cuadro de contenido
         document.getElementById('oa-content-default').classList.remove('hidden');
         document.getElementById('oa-content-active').classList.add('hidden');
 
-        // Mostrar vista detalle
         document.getElementById('view-dashboard').classList.add('hidden');
         document.getElementById('view-module-detail').classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
-      // 2. Clic en "Volver a todos los módulos"
+      // D. Clic en "Volver a los módulos de 1ro Medio"
       if (e.target && e.target.id === 'btn-volver-dashboard') {
         document.getElementById('view-module-detail').classList.add('hidden');
         document.getElementById('view-dashboard').classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
-      // 3. Clic en un Botón de Objetivo (OA)
+      // E. Clic en un Botón de Objetivo (OA)
       const btnOA = e.target.closest('.btn-oa');
       if (btnOA) {
         const oaId = btnOA.getAttribute('data-oa-id');
@@ -305,7 +373,6 @@
           document.getElementById('oa-content-default').classList.add('hidden');
           document.getElementById('oa-content-active').classList.remove('hidden');
 
-          // Estilo activo al botón
           document.querySelectorAll('.btn-oa').forEach(b => {
             b.classList.remove('border-blue-600', 'bg-blue-50', 'text-blue-600');
           });
