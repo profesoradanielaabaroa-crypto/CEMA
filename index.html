@@ -235,7 +235,7 @@
       <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
         <div>
           <span class="text-xs font-extrabold uppercase bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">Evaluación Formativa</span>
-          <h3 id="quiz-header-title" class="text-lg font-bold text-slate-800 mt-1">Regla de los Signos para la Adición</h3>
+          <h3 id="quiz-header-title" class="text-lg font-bold text-slate-800 mt-1">Evaluación Interactiva</h3>
         </div>
         <button id="btn-close-quiz" class="text-slate-400 hover:text-slate-600 font-bold text-xl px-2">✕</button>
       </div>
@@ -306,8 +306,8 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // BANCO DE PREGUNTAS
-    const setQuestions1 = [
+    // BANCOS DE PREGUNTAS (QUIZ 1 - ADICIÓN Y QUIZ 2 - MULTIPLICACIÓN/DIVISIÓN)
+    const quiz1Set1 = [
       { q: "Calcula: -7 + (-4)", options: ["11", "-11", "-3", "3"], correct: 1, exp: "Al sumar dos números negativos, se suman sus valores absolutos (7 + 4 = 11) y se conserva el signo negativo: -11." },
       { q: "Calcula: 12 + (-5)", options: ["17", "-7", "7", "-17"], correct: 2, exp: "Al sumar números con distinto signo, se restan sus valores absolutos (12 - 5 = 7) y se deja el signo del mayor: 7." },
       { q: "Calcula: -15 + 8", options: ["-7", "7", "-23", "23"], correct: 0, exp: "Tienen distinto signo, restamos 15 - 8 = 7. Como -15 es mayor en valor absoluto, queda -7." },
@@ -320,7 +320,7 @@
       { q: "Calcula: 3 + (-11)", options: ["-8", "8", "-14", "14"], correct: 0, exp: "Restamos 11 - 3 = 8 y conservamos el signo de -11: -8." }
     ];
 
-    const setQuestions2 = [
+    const quiz1Set2 = [
       { q: "Calcula: -9 + (-6)", options: ["15", "-15", "-3", "3"], correct: 1, exp: "Sumamos 9 + 6 = 15 y conservamos el signo negativo: -15." },
       { q: "Calcula: 15 + (-9)", options: ["24", "-6", "6", "-24"], correct: 2, exp: "Restamos 15 - 9 = 6. Como 15 es mayor, queda positivo: 6." },
       { q: "Calcula: -12 + 5", options: ["-7", "7", "-17", "17"], correct: 0, exp: "Restamos 12 - 5 = 7. Mantenemos el signo del -12: -7." },
@@ -331,6 +331,32 @@
       { q: "Calcula: -14 + 14", options: ["0", "-28", "28", "1"], correct: 0, exp: "Números opuestos suman 0." },
       { q: "Calcula: -8 - 6", options: ["-2", "2", "-14", "14"], correct: 2, exp: "Equivale a -8 + (-6) = -14." },
       { q: "Calcula: 5 + (-12)", options: ["-7", "7", "-17", "17"], correct: 0, exp: "Restamos 12 - 5 = 7. Conservamos el signo del -12: -7." }
+    ];
+
+    const quiz2Set1 = [
+      { q: "Calcula: -6 · (-5)", options: ["-30", "30", "-11", "11"], correct: 1, exp: "Al multiplicar dos números negativos, el resultado es positivo: (-6) · (-5) = 30." },
+      { q: "Calcula: 8 · (-4)", options: ["32", "-12", "-32", "4"], correct: 2, exp: "Positivo por negativo da como resultado negativo: 8 · (-4) = -32." },
+      { q: "Calcula: -36 : (-9)", options: ["-4", "4", "-27", "27"], correct: 1, exp: "Al dividir dos números con el mismo signo negativo, el resultado es positivo: (-36) : (-9) = 4." },
+      { q: "Calcula: -48 : 6", options: ["-8", "8", "-42", "42"], correct: 0, exp: "Negativo dividido entre positivo da como resultado negativo: (-48) : 6 = -8." },
+      { q: "Calcula: -7 · 3", options: ["21", "-21", "-10", "10"], correct: 1, exp: "Negativo por positivo resulta negativo: (-7) · 3 = -21." },
+      { q: "Calcula: -15 : (-3)", options: ["-5", "5", "-12", "12"], correct: 1, exp: "Negativo dividido entre negativo da positivo: (-15) : (-3) = 5." },
+      { q: "Calcula: 9 · (-2)", options: ["-18", "18", "-7", "7"], correct: 0, exp: "Positivo por negativo resulta negativo: 9 · (-2) = -18." },
+      { q: "Calcula: 50 : (-10)", options: ["5", "-5", "-40", "40"], correct: 1, exp: "Positivo dividido entre negativo resulta negativo: 50 : (-10) = -5." },
+      { q: "Calcula: -4 · (-8)", options: ["-32", "32", "-12", "12"], correct: 1, exp: "Ambos números son negativos, por lo que su producto es positivo: (-4) · (-8) = 32." },
+      { q: "Calcula: -63 : 7", options: ["9", "-9", "-56", "56"], correct: 1, exp: "Distinto signo en la división da como resultado negativo: (-63) : 7 = -9." }
+    ];
+
+    const quiz2Set2 = [
+      { q: "Calcula: -7 · (-6)", options: ["-42", "42", "-13", "13"], correct: 1, exp: "Negativo por negativo da positivo: (-7) · (-6) = 42." },
+      { q: "Calcula: 6 · (-5)", options: ["30", "-11", "-30", "1"], correct: 2, exp: "Positivo por negativo da negativo: 6 · (-5) = -30." },
+      { q: "Calcula: -40 : (-8)", options: ["-5", "5", "-32", "32"], correct: 1, exp: "Negativo dividido entre negativo da positivo: (-40) : (-8) = 5." },
+      { q: "Calcula: -54 : 9", options: ["-6", "6", "-45", "45"], correct: 0, exp: "Negativo dividido entre positivo da negativo: (-54) : 9 = -6." },
+      { q: "Calcula: -8 · 4", options: ["32", "-32", "-4", "4"], correct: 1, exp: "Negativo por positivo da negativo: (-8) · 4 = -32." },
+      { q: "Calcula: -24 : (-4)", options: ["-6", "6", "-20", "20"], correct: 1, exp: "Negativo entre negativo da positivo: (-24) : (-4) = 6." },
+      { q: "Calcula: 7 · (-3)", options: ["-21", "21", "-10", "10"], correct: 0, exp: "Positivo por negativo da negativo: 7 · (-3) = -21." },
+      { q: "Calcula: 36 : (-6)", options: ["6", "-6", "-30", "30"], correct: 1, exp: "Positivo entre negativo da negativo: 36 : (-6) = -6." },
+      { q: "Calcula: -5 · (-9)", options: ["-45", "45", "-14", "14"], correct: 1, exp: "Negativo por negativo da positivo: (-5) · (-9) = 45." },
+      { q: "Calcula: -72 : 8", options: ["9", "-9", "-64", "64"], correct: 1, exp: "Negativo entre positivo da negativo: (-72) : 8 = -9." }
     ];
 
     // MÓDULOS DE 1RO MEDIO
@@ -367,20 +393,27 @@
                     🎥 3° Regla de los signos para la adición 2 ↗
                   </a>
                   
-                  <!-- PDF DE RESUMEN DESPUÉS DEL 3ER RECURSO -->
+                  <!-- PDF DE RESUMEN -->
                   <a href="https://drive.google.com/file/d/1zv9XtunI3_kUzBtgQueoyrtp84dfQUQP/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
                     📄 Resumen regla de los signos (PDF) ↗
                   </a>
 
                   <!-- EVALUACIÓN INTERACTIVA N°1 -->
-                  <button id="btn-start-quiz" class="w-full inline-flex items-center justify-between bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs px-4 py-3.5 rounded-xl transition shadow-md my-1">
-                    <span class="flex items-center gap-2">📝 Evaluación Interactiva N°1: Regla de los Signos</span>
+                  <button class="btn-start-quiz-1 w-full inline-flex items-center justify-between bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs px-4 py-3.5 rounded-xl transition shadow-md my-1">
+                    <span class="flex items-center gap-2">📝 Evaluación Interactiva N°1: Regla de los Signos (Adición)</span>
                     <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px]">10 Ejercicios</span>
                   </button>
 
                   <a href="https://drive.google.com/file/d/1nqrVmhOcoV70aHg-piKB3pb5HrOr9y1B/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
                     🎥 4° Regla de los signos para la multiplicación y división ↗
                   </a>
+
+                  <!-- EVALUACIÓN INTERACTIVA N°2 TRAS EL 4TO CONTENIDO -->
+                  <button class="btn-start-quiz-2 w-full inline-flex items-center justify-between bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold text-xs px-4 py-3.5 rounded-xl transition shadow-md my-1">
+                    <span class="flex items-center gap-2">📝 Evaluación Interactiva N°2: Multiplicación y División</span>
+                    <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px]">10 Ejercicios</span>
+                  </button>
+
                   <a href="https://drive.google.com/file/d/13FwJPgItioQBNvCcukHvCcVJq93wIuy2/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
                     🎥 5° Términos algebraicos semejantes ↗
                   </a>
@@ -443,14 +476,23 @@
       }
     });
 
-    // VARIABLES DEL QUIZ
+    // VARIABLES Y CONTROL DEL QUIZ
     let activeQuestions = [];
     let currentQIndex = 0;
     let score = 0;
     let attemptCount = 1;
+    let currentQuizType = 1; // 1 o 2
 
-    function startQuiz() {
-      activeQuestions = attemptCount === 1 ? [...setQuestions1] : [...setQuestions2];
+    function startQuiz(type) {
+      currentQuizType = type;
+      if (type === 1) {
+        document.getElementById('quiz-header-title').innerText = "Regla de los Signos para la Adición";
+        activeQuestions = attemptCount === 1 ? [...quiz1Set1] : [...quiz1Set2];
+      } else {
+        document.getElementById('quiz-header-title').innerText = "Multiplicación y División de Enteros";
+        activeQuestions = attemptCount === 1 ? [...quiz2Set1] : [...quiz2Set2];
+      }
+
       currentQIndex = 0;
       score = 0;
 
@@ -531,7 +573,7 @@
       if (score >= passScore) {
         document.getElementById('quiz-result-icon').innerText = '🏆';
         document.getElementById('quiz-result-title').innerText = '¡Felicidades! Aprobaste la Evaluación';
-        document.getElementById('quiz-result-msg').innerText = 'Has demostrado un excelente dominio de la regla de los signos para la adición (superando el 90%).';
+        document.getElementById('quiz-result-msg').innerText = 'Has demostrado un excelente dominio del contenido (superando el 90%).';
         actionBtn.innerText = 'Finalizar y Cerrar';
         actionBtn.onclick = () => document.getElementById('quiz-modal').classList.add('hidden');
       } else {
@@ -541,7 +583,7 @@
         actionBtn.innerText = 'Iniciar Nuevo Set de Refuerzo 🔄';
         actionBtn.onclick = () => {
           attemptCount++;
-          startQuiz();
+          startQuiz(currentQuizType);
         };
       }
     }
@@ -604,10 +646,14 @@
         }
       }
 
-      // Evento Iniciar Quiz
-      if (e.target && e.target.closest('#btn-start-quiz')) {
+      // Eventos Iniciar Quizzes
+      if (e.target && e.target.closest('.btn-start-quiz-1')) {
         attemptCount = 1;
-        startQuiz();
+        startQuiz(1);
+      }
+      if (e.target && e.target.closest('.btn-start-quiz-2')) {
+        attemptCount = 1;
+        startQuiz(2);
       }
 
       // Siguiente Pregunta
