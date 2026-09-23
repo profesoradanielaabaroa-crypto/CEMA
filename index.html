@@ -306,7 +306,7 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // BANCO DE PREGUNTAS (SET 1 & SET 2 REFUERZO)
+    // BANCO DE PREGUNTAS
     const setQuestions1 = [
       { q: "Calcula: -7 + (-4)", options: ["11", "-11", "-3", "3"], correct: 1, exp: "Al sumar dos números negativos, se suman sus valores absolutos (7 + 4 = 11) y se conserva el signo negativo: -11." },
       { q: "Calcula: 12 + (-5)", options: ["17", "-7", "7", "-17"], correct: 2, exp: "Al sumar números con distinto signo, se restan sus valores absolutos (12 - 5 = 7) y se deja el signo del mayor: 7." },
@@ -367,11 +367,54 @@
                     🎥 3° Regla de los signos para la adición 2 ↗
                   </a>
 
-                  <!-- BOTÓN DE EVALUACIÓN TRAS EL 3ER CONTENIDO -->
-                  <button id="btn-start-quiz" class="w-full inline-flex items-center justify-between bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs px-4 py-3.5 rounded-xl transition shadow-md mt-2">
-                    <span class="flex items-center gap-2">📝 📝 Evaluación Interactiva N°1: Regla de los Signos</span>
+                  <!-- EVALUACIÓN INTERACTIVA N°1 -->
+                  <button id="btn-start-quiz" class="w-full inline-flex items-center justify-between bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs px-4 py-3.5 rounded-xl transition shadow-md my-1">
+                    <span class="flex items-center gap-2">📝 Evaluación Interactiva N°1: Regla de los Signos</span>
                     <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px]">10 Ejercicios</span>
                   </button>
+
+                  <a href="https://drive.google.com/file/d/1nqrVmhOcoV70aHg-piKB3pb5HrOr9y1B/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
+                    🎥 4° Regla de los signos para la multiplicación y división ↗
+                  </a>
+                  <a href="https://drive.google.com/file/d/13FwJPgItioQBNvCcukHvCcVJq93wIuy2/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
+                    🎥 5° Términos algebraicos semejantes ↗
+                  </a>
+                  <a href="https://drive.google.com/file/d/1hwjM8wRil98UA3AIsFUV96_BGl4G3SK0/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
+                    🎥 6° Reducción de términos semejantes ↗
+                  </a>
+                  <a href="https://drive.google.com/file/d/1mQqAjblOAozFnWsu5tTbAgOGLrBllceG/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
+                    🎥 7° Propiedades de las potencias ↗
+                  </a>
+                  <a href="https://drive.google.com/file/d/1q13YPnvCzgVbRn4L7EwcB3mulHffGLw2/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
+                    🎥 8° Propiedad distributiva ↗
+                  </a>
+                  <a href="https://drive.google.com/file/d/1oNlMqHIpKMHApwTUFO36Drq16yzaa9MQ/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
+                    🎥 9° Productos notables - término común ↗
+                  </a>
+                  <a href="https://drive.google.com/file/d/1fUcOUoEKEoL5kvmWBHu-YKerq75kRqPf/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
+                    🎥 10° Productos notables - cuadrado de binomio ↗
+                  </a>
+                  <a href="https://drive.google.com/file/d/1uCG8uFlJsCGWNWAVIqV47ZAAV4zprfEA/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
+                    🎥 11° Productos notables - suma por su diferencia ↗
+                  </a>
+                  <a href="https://drive.google.com/file/d/1OmlYXZtwpROF6fct05YpSAqa9A_2pnjr/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
+                    🎥 12° Productos notables pictóricamente ↗
+                  </a>
+                  <a href="https://drive.google.com/file/d/1eXzIvk-8GmfqF2wsrUwkzlQqCE_awX3R/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
+                    🎥 13° Identificación de productos notables ↗
+                  </a>
+                  <a href="https://drive.google.com/file/d/1ZJoBcwN6wZRlB5R7xfeGn7pRjvGvNasH/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
+                    🎥 14° Factorización de trinomios ↗
+                  </a>
+                  <a href="https://drive.google.com/file/d/1MCgrA4uR__pWaxdQQuupR-1er3Kjzgn4/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
+                    🎥 15° Factorización binomio por término común ↗
+                  </a>
+                  <a href="https://drive.google.com/file/d/1tEV7yPkgF9YlGfjprfbzUH1ys7HAAhoS/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
+                    🎥 16° Factorización diferencia de cuadrados (suma por su diferencia) ↗
+                  </a>
+                  <a href="https://drive.google.com/file/d/1zv9XtunI3_kUzBtgQueoyrtp84dfQUQP/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
+                    📄 Resumen regla de los signos (PDF) ↗
+                  </a>
                 </div>
               </div>
             ` 
@@ -478,7 +521,7 @@
       document.getElementById('quiz-body').classList.add('hidden');
       document.getElementById('quiz-result').classList.remove('hidden');
 
-      const passScore = 9; // 90% de 10 es 9
+      const passScore = 9;
       document.getElementById('quiz-result-score').innerText = `${score} / 10 correctas`;
 
       const actionBtn = document.getElementById('btn-quiz-action');
