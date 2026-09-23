@@ -227,6 +227,67 @@
   </div>
 
 
+  <!-- MODAL / CONTENEDOR DE EVALUACIÓN INTERACTIVA -->
+  <div id="quiz-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative overflow-hidden">
+      
+      <!-- Encabezado del Quiz -->
+      <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
+        <div>
+          <span class="text-xs font-extrabold uppercase bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">Evaluación Formativa</span>
+          <h3 id="quiz-header-title" class="text-lg font-bold text-slate-800 mt-1">Regla de los Signos para la Adición</h3>
+        </div>
+        <button id="btn-close-quiz" class="text-slate-400 hover:text-slate-600 font-bold text-xl px-2">✕</button>
+      </div>
+
+      <!-- Cuerpo de la Pregunta -->
+      <div id="quiz-body">
+        <div class="flex justify-between items-center text-xs text-slate-500 font-semibold mb-3">
+          <span id="quiz-progress-text">Pregunta 1 de 10</span>
+          <span id="quiz-attempt-badge" class="bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full">Intento 1</span>
+        </div>
+
+        <div class="w-full bg-slate-100 h-2 rounded-full mb-6 overflow-hidden">
+          <div id="quiz-progress-bar" class="bg-blue-600 h-full w-10 transition-all duration-300"></div>
+        </div>
+
+        <p id="quiz-question" class="text-lg font-bold text-slate-800 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+          <!-- Texto de pregunta -->
+        </p>
+
+        <!-- Opciones de Respuesta -->
+        <div id="quiz-options" class="space-y-3 mb-6">
+          <!-- Botones de alternativas -->
+        </div>
+
+        <!-- Retroalimentación -->
+        <div id="quiz-feedback" class="hidden p-4 rounded-xl border text-sm mb-6">
+          <p id="quiz-feedback-text" class="font-medium mb-1"></p>
+          <p id="quiz-feedback-exp" class="text-xs text-slate-600"></p>
+        </div>
+
+        <!-- Botón Siguiente -->
+        <button id="btn-quiz-next" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition hidden shadow-md">
+          Siguiente Pregunta →
+        </button>
+      </div>
+
+      <!-- Vista de Resultados Finales -->
+      <div id="quiz-result" class="hidden text-center py-6">
+        <div id="quiz-result-icon" class="text-5xl mb-4">🎯</div>
+        <h4 id="quiz-result-title" class="text-2xl font-bold text-slate-800 mb-2">¡Evaluación Finalizada!</h4>
+        <p id="quiz-result-score" class="text-3xl font-black text-blue-600 mb-2">0/10</p>
+        <p id="quiz-result-msg" class="text-slate-600 text-sm max-w-md mx-auto mb-6"></p>
+        
+        <button id="btn-quiz-action" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl transition shadow-md">
+          Continuar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
   <!-- LÓGICA JAVASCRIPT & FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -245,6 +306,33 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
+    // BANCO DE PREGUNTAS (SET 1 & SET 2 REFUERZO)
+    const setQuestions1 = [
+      { q: "Calcula: -7 + (-4)", options: ["11", "-11", "-3", "3"], correct: 1, exp: "Al sumar dos números negativos, se suman sus valores absolutos (7 + 4 = 11) y se conserva el signo negativo: -11." },
+      { q: "Calcula: 12 + (-5)", options: ["17", "-7", "7", "-17"], correct: 2, exp: "Al sumar números con distinto signo, se restan sus valores absolutos (12 - 5 = 7) y se deja el signo del mayor: 7." },
+      { q: "Calcula: -15 + 8", options: ["-7", "7", "-23", "23"], correct: 0, exp: "Tienen distinto signo, restamos 15 - 8 = 7. Como -15 es mayor en valor absoluto, queda -7." },
+      { q: "Calcula: 9 - 14", options: ["5", "-23", "-5", "23"], correct: 2, exp: "Restar 14 equivale a 9 + (-14). Restamos 14 - 9 = 5 y conservamos el signo negativo de -14: -5." },
+      { q: "Calcula: -6 - (-10)", options: ["-16", "4", "-4", "16"], correct: 1, exp: "Restar un negativo equivale a sumar su opuesto: -6 + 10. Restamos 10 - 6 = 4." },
+      { q: "Calcula: -18 + (-2)", options: ["-16", "16", "-20", "20"], correct: 2, exp: "Ambos son negativos, sumamos 18 + 2 = 20 y mantenemos el signo negativo: -20." },
+      { q: "Calcula: 4 - (-7)", options: ["-3", "11", "-11", "3"], correct: 1, exp: "Restar (-7) se convierte en sumar +7: 4 + 7 = 11." },
+      { q: "Calcula: -20 + 20", options: ["0", "-40", "40", "1"], correct: 0, exp: "La suma de dos números opuestos siempre da como resultado 0." },
+      { q: "Calcula: -13 - 7", options: ["-6", "6", "-20", "20"], correct: 2, exp: "-13 - 7 equivale a -13 + (-7). Sumamos los valores 13 + 7 = 20 con signo negativo: -20." },
+      { q: "Calcula: 3 + (-11)", options: ["-8", "8", "-14", "14"], correct: 0, exp: "Restamos 11 - 3 = 8 y conservamos el signo de -11: -8." }
+    ];
+
+    const setQuestions2 = [
+      { q: "Calcula: -9 + (-6)", options: ["15", "-15", "-3", "3"], correct: 1, exp: "Sumamos 9 + 6 = 15 y conservamos el signo negativo: -15." },
+      { q: "Calcula: 15 + (-9)", options: ["24", "-6", "6", "-24"], correct: 2, exp: "Restamos 15 - 9 = 6. Como 15 es mayor, queda positivo: 6." },
+      { q: "Calcula: -12 + 5", options: ["-7", "7", "-17", "17"], correct: 0, exp: "Restamos 12 - 5 = 7. Mantenemos el signo del -12: -7." },
+      { q: "Calcula: 8 - 15", options: ["7", "-23", "-7", "23"], correct: 2, exp: "Restar 15 equivale a 8 + (-15). Restamos 15 - 8 = 7 y queda negativo: -7." },
+      { q: "Calcula: -4 - (-9)", options: ["-13", "5", "-5", "13"], correct: 1, exp: "Equivale a -4 + 9. Restamos 9 - 4 = 5." },
+      { q: "Calcula: -11 + (-5)", options: ["-6", "6", "-16", "16"], correct: 2, exp: "Mismo signo negativo, sumamos 11 + 5 = 16: -16." },
+      { q: "Calcula: 6 - (-8)", options: ["-2", "14", "-14", "2"], correct: 1, exp: "Restar (-8) equivale a sumar +8: 6 + 8 = 14." },
+      { q: "Calcula: -14 + 14", options: ["0", "-28", "28", "1"], correct: 0, exp: "Números opuestos suman 0." },
+      { q: "Calcula: -8 - 6", options: ["-2", "2", "-14", "14"], correct: 2, exp: "Equivale a -8 + (-6) = -14." },
+      { q: "Calcula: 5 + (-12)", options: ["-7", "7", "-17", "17"], correct: 0, exp: "Restamos 12 - 5 = 7. Conservamos el signo del -12: -7." }
+    ];
+
     // MÓDULOS DE 1RO MEDIO
     const modulesData = {
       mod1: {
@@ -252,8 +340,8 @@
         title: "Módulo 1: Números",
         desc: "Aprende operaciones fundamentales con números racionales y potencias.",
         oas: [
-          { id: "oa1", title: "OA 1: Cálculo con números racionales", desc: "Conceptos, operaciones combinadas y simplificación de fracciones.", material: "<p class='text-sm text-slate-600 mb-2'>Material sugerido para OA 1:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition'>📄 Descargar Guía OA 1 (PDF)</a></div>" },
-          { id: "oa2", title: "OA 2: Potencias de base racional y exponente entero", desc: "Propiedades de las potencias, multiplicación y división con exponente entero.", material: "<p class='text-sm text-slate-600 mb-2'>Material sugerido para OA 2:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition'>🎥 Ver Video Explicativo OA 2</a></div>" }
+          { id: "oa1", title: "OA 1: Cálculo con números racionales", desc: "Conceptos, operaciones combinadas y simplificación de fracciones.", material: "<p class='text-sm text-slate-600 mb-2'>Material sugerido para OA 1:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-medium text-xs px-4 py-2.5 rounded-xl'>📄 Descargar Guía OA 1 (PDF)</a></div>" },
+          { id: "oa2", title: "OA 2: Potencias de base racional y exponente entero", desc: "Propiedades de las potencias, multiplicación y división con exponente entero.", material: "<p class='text-sm text-slate-600 mb-2'>Material sugerido para OA 2:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-medium text-xs px-4 py-2.5 rounded-xl'>🎥 Ver Video Explicativo OA 2</a></div>" }
         ]
       },
       mod2: {
@@ -278,6 +366,12 @@
                   <a href="https://drive.google.com/file/d/1MMsDMcNsBkBMh2gQYjYQ3nAq7FHeQ1wp/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
                     🎥 3° Regla de los signos para la adición 2 ↗
                   </a>
+
+                  <!-- BOTÓN DE EVALUACIÓN TRAS EL 3ER CONTENIDO -->
+                  <button id="btn-start-quiz" class="w-full inline-flex items-center justify-between bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs px-4 py-3.5 rounded-xl transition shadow-md mt-2">
+                    <span class="flex items-center gap-2">📝 📝 Evaluación Interactiva N°1: Regla de los Signos</span>
+                    <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px]">10 Ejercicios</span>
+                  </button>
                 </div>
               </div>
             ` 
@@ -286,30 +380,8 @@
           { id: "oa5", title: "OA 5: Gráficas de funciones f(x,y) = ax + by", desc: "Representación en el plano cartesiano e interpretación de pendientes.", material: "<p class='text-sm text-slate-600 mb-2'>Material de apoyo:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-semibold text-xs px-4 py-3 rounded-xl'>📊 Simulador Interactivo OA 5</a></div>" }
         ]
       },
-      mod3: {
-        tag: "Módulo 03",
-        title: "Módulo 3: Geometría",
-        desc: "Estudio de figuras geométricas, volúmenes, proporcionalidad y transformaciones.",
-        oas: [
-          { id: "oa6", title: "OA 6: Área y perímetro de sectores circulares", desc: "Fórmulas y aplicaciones en cálculo de ángulos y arcos.", material: "<p class='text-sm text-slate-600 mb-2'>Recursos OA 6:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-semibold text-xs px-4 py-3 rounded-xl'>📄 Ver Formulario y Guía</a></div>" },
-          { id: "oa7", title: "OA 7: Superficie y volumen de un cono", desc: "Cálculo del área lateral, área total y volumen del cono.", material: "<p class='text-sm text-slate-600 mb-2'>Recursos OA 7:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-semibold text-xs px-4 py-3 rounded-xl'>🎥 Clase Grabada Conos</a></div>" },
-          { id: "oa8", title: "OA 8: Homotecia", desc: "Centro y razón de homotecia para transformaciones en el plano.", material: "<p class='text-sm text-slate-600 mb-2'>Recursos OA 8:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-semibold text-xs px-4 py-3 rounded-xl'>📄 Guía Práctica OA 8</a></div>" },
-          { id: "oa9", title: "OA 9: Teorema de Tales", desc: "Aplicaciones del teorema en rectas paralelas cortadas por transversales.", material: "<p class='text-sm text-slate-600 mb-2'>Recursos OA 9:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-semibold text-xs px-4 py-3 rounded-xl'>📄 Taller de Problemas</a></div>" },
-          { id: "oa10", title: "OA 10: Semejanza y proporcionalidad", desc: "Criterios de semejanza de triángulos y escalas.", material: "<p class='text-sm text-slate-600 mb-2'>Recursos OA 10:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-semibold text-xs px-4 py-3 rounded-xl'>📄 Resumen Teórico</a></div>" },
-          { id: "oa11", title: "OA 11: Homotecia vectorial", desc: "Vectores aplicados a transformaciones de homotecia.", material: "<p class='text-sm text-slate-600 mb-2'>Recursos OA 11:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-semibold text-xs px-4 py-3 rounded-xl'>📄 Guía Avanzada</a></div>" }
-        ]
-      },
-      mod4: {
-        tag: "Módulo 04",
-        title: "Módulo 4: Probabilidad y Estadística",
-        desc: "Análisis de datos, tablas de doble entrada y conceptos de probabilidad y azar.",
-        oas: [
-          { id: "oa12", title: "OA 12: Datos y estadística de doble entrada", desc: "Organización de datos en tablas de contingencia.", material: "<p class='text-sm text-slate-600 mb-2'>Material OA 12:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-semibold text-xs px-4 py-3 rounded-xl'>📄 Plantilla de Tablas</a></div>" },
-          { id: "oa13", title: "OA 13: Análisis y gráficos de doble entrada", desc: "Interpretación visual y análisis crítico de datos agrupados.", material: "<p class='text-sm text-slate-600 mb-2'>Material OA 13:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-semibold text-xs px-4 py-3 rounded-xl'>📊 Lectura de Gráficos</a></div>" },
-          { id: "oa14", title: "OA 14: Reglas de probabilidad", desc: "Regla aditiva, multiplicativa y probabilidad condicional.", material: "<p class='text-sm text-slate-600 mb-2'>Material OA 14:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-semibold text-xs px-4 py-3 rounded-xl'>📄 Guía de Problemas</a></div>" },
-          { id: "oa15", title: "OA 15: Azar", desc: "Experimentos aleatorios, espacio muestral y frecuencias.", material: "<p class='text-sm text-slate-600 mb-2'>Material OA 15:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-semibold text-xs px-4 py-3 rounded-xl'>🎲 Experimentos de Azar</a></div>" }
-        ]
-      }
+      mod3: { tag: "Módulo 03", title: "Módulo 3: Geometría", desc: "Estudio de figuras geométricas.", oas: [] },
+      mod4: { tag: "Módulo 04", title: "Módulo 4: Probabilidad y Estadística", desc: "Análisis de datos.", oas: [] }
     };
 
     let currentModuleData = null;
@@ -326,24 +398,119 @@
       }
     });
 
-    // EVENTOS DE NAVEGACIÓN GLOBAL
-    document.addEventListener('click', (e) => {
+    // VARIABLES DEL QUIZ
+    let activeQuestions = [];
+    let currentQIndex = 0;
+    let score = 0;
+    let attemptCount = 1;
+
+    function startQuiz() {
+      activeQuestions = attemptCount === 1 ? [...setQuestions1] : [...setQuestions2];
+      currentQIndex = 0;
+      score = 0;
+
+      document.getElementById('quiz-body').classList.remove('hidden');
+      document.getElementById('quiz-result').classList.add('hidden');
+      document.getElementById('quiz-attempt-badge').innerText = `Intento ${attemptCount}`;
+      document.getElementById('quiz-modal').classList.remove('hidden');
+
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = activeQuestions[currentQIndex];
+      document.getElementById('quiz-progress-text').innerText = `Pregunta ${currentQIndex + 1} de ${activeQuestions.length}`;
+      document.getElementById('quiz-progress-bar').style.width = `${((currentQIndex + 1) / activeQuestions.length) * 100}%`;
+      document.getElementById('quiz-question').innerText = q.q;
+
+      const optsContainer = document.getElementById('quiz-options');
+      optsContainer.innerHTML = '';
+
+      q.options.forEach((optText, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn w-full text-left px-4 py-3 border-2 border-slate-200 rounded-xl hover:border-blue-500 font-semibold text-slate-700 text-sm transition';
+        btn.innerText = `${String.fromCharCode(65 + index)})  ${optText}`;
+        btn.addEventListener('click', () => selectAnswer(index));
+        optsContainer.appendChild(btn);
+      });
+
+      document.getElementById('quiz-feedback').classList.add('hidden');
+      document.getElementById('btn-quiz-next').classList.add('hidden');
+    }
+
+    function selectAnswer(selectedIndex) {
+      const q = activeQuestions[currentQIndex];
+      const allBtns = document.querySelectorAll('.quiz-opt-btn');
       
-      // A. Clic en "Ingresar al Curso" (1ro Medio)
+      allBtns.forEach(b => b.classList.add('pointer-events-none', 'opacity-60'));
+
+      const feedbackBox = document.getElementById('quiz-feedback');
+      const feedbackText = document.getElementById('quiz-feedback-text');
+      const feedbackExp = document.getElementById('quiz-feedback-exp');
+
+      if (selectedIndex === q.correct) {
+        score++;
+        allBtns[selectedIndex].className = 'quiz-opt-btn w-full text-left px-4 py-3 border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold text-sm rounded-xl';
+        feedbackBox.className = 'p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 text-sm mb-6';
+        feedbackText.innerText = '¡Respuesta Correcta! 🎉';
+      } else {
+        allBtns[selectedIndex].className = 'quiz-opt-btn w-full text-left px-4 py-3 border-2 border-red-500 bg-red-50 text-red-800 font-bold text-sm rounded-xl';
+        allBtns[q.correct].className = 'quiz-opt-btn w-full text-left px-4 py-3 border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold text-sm rounded-xl';
+        feedbackBox.className = 'p-4 rounded-xl border border-red-200 bg-red-50 text-red-900 text-sm mb-6';
+        feedbackText.innerText = 'Respuesta Incorrecta ❌';
+      }
+
+      feedbackExp.innerText = q.exp;
+      feedbackBox.classList.remove('hidden');
+      document.getElementById('btn-quiz-next').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      currentQIndex++;
+      if (currentQIndex < activeQuestions.length) {
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('quiz-body').classList.add('hidden');
+      document.getElementById('quiz-result').classList.remove('hidden');
+
+      const passScore = 9; // 90% de 10 es 9
+      document.getElementById('quiz-result-score').innerText = `${score} / 10 correctas`;
+
+      const actionBtn = document.getElementById('btn-quiz-action');
+
+      if (score >= passScore) {
+        document.getElementById('quiz-result-icon').innerText = '🏆';
+        document.getElementById('quiz-result-title').innerText = '¡Felicidades! Aprobaste la Evaluación';
+        document.getElementById('quiz-result-msg').innerText = 'Has demostrado un excelente dominio de la regla de los signos para la adición (superando el 90%).';
+        actionBtn.innerText = 'Finalizar y Cerrar';
+        actionBtn.onclick = () => document.getElementById('quiz-modal').classList.add('hidden');
+      } else {
+        document.getElementById('quiz-result-icon').innerText = '💡';
+        document.getElementById('quiz-result-title').innerText = '¡Casi lo logras!';
+        document.getElementById('quiz-result-msg').innerText = `Obtuviste un ${score * 10}%. Para aprobar necesitas al menos un 90% (9 de 10 buenas). Iniciarás un nuevo set de ejercicios de refuerzo.`;
+        actionBtn.innerText = 'Iniciar Nuevo Set de Refuerzo 🔄';
+        actionBtn.onclick = () => {
+          attemptCount++;
+          startQuiz();
+        };
+      }
+    }
+
+    // NAVEGACIÓN GLOBAL
+    document.addEventListener('click', (e) => {
       if (e.target && e.target.id === 'btn-select-1medio') {
         document.getElementById('view-courses').classList.add('hidden');
         document.getElementById('view-dashboard').classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-
-      // B. Clic en "Volver a Selección de Cursos"
       if (e.target && e.target.id === 'btn-volver-cursos') {
         document.getElementById('view-dashboard').classList.add('hidden');
         document.getElementById('view-courses').classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-
-      // C. Clic en "Ver Clase" (Cualquiera de los 4 módulos de 1ro Medio)
       const btnVer = e.target.closest('.btn-ver-modulo');
       if (btnVer) {
         const modKey = btnVer.getAttribute('data-mod');
@@ -369,17 +536,11 @@
 
         document.getElementById('view-dashboard').classList.add('hidden');
         document.getElementById('view-module-detail').classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-
-      // D. Clic en "Volver a los módulos de 1ro Medio"
       if (e.target && e.target.id === 'btn-volver-dashboard') {
         document.getElementById('view-module-detail').classList.add('hidden');
         document.getElementById('view-dashboard').classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-
-      // E. Clic en un Botón de Objetivo (OA)
       const btnOA = e.target.closest('.btn-oa');
       if (btnOA) {
         const oaId = btnOA.getAttribute('data-oa-id');
@@ -393,15 +554,29 @@
           document.getElementById('oa-content-default').classList.add('hidden');
           document.getElementById('oa-content-active').classList.remove('hidden');
 
-          document.querySelectorAll('.btn-oa').forEach(b => {
-            b.classList.remove('border-blue-600', 'bg-blue-50', 'text-blue-600');
-          });
+          document.querySelectorAll('.btn-oa').forEach(b => b.classList.remove('border-blue-600', 'bg-blue-50', 'text-blue-600'));
           btnOA.classList.add('border-blue-600', 'bg-blue-50', 'text-blue-600');
         }
       }
+
+      // Evento Iniciar Quiz
+      if (e.target && e.target.closest('#btn-start-quiz')) {
+        attemptCount = 1;
+        startQuiz();
+      }
+
+      // Siguiente Pregunta
+      if (e.target && e.target.id === 'btn-quiz-next') {
+        nextQuestion();
+      }
+
+      // Cerrar Modal
+      if (e.target && e.target.id === 'btn-close-quiz') {
+        document.getElementById('quiz-modal').classList.add('hidden');
+      }
     });
 
-    // EVENTOS DE AUTENTICACIÓN
+    // AUTENTICACIÓN
     document.getElementById('btn-google').addEventListener('click', async () => {
       try { await signInWithPopup(auth, provider); } catch (err) { showError(err.message); }
     });
