@@ -227,11 +227,11 @@
   </div>
 
 
-  <!-- MODAL / CONTENEDOR DE EVALUACIÓN INTERACTIVA -->
+  <!-- MODAL DE EVALUACIÓN INTERACTIVA -->
   <div id="quiz-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative overflow-hidden">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl relative overflow-hidden">
       
-      <!-- Encabezado del Quiz -->
+      <!-- Encabezado -->
       <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
         <div>
           <span class="text-xs font-extrabold uppercase bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">Evaluación Formativa</span>
@@ -240,7 +240,7 @@
         <button id="btn-close-quiz" class="text-slate-400 hover:text-slate-600 font-bold text-xl px-2">✕</button>
       </div>
 
-      <!-- Cuerpo de la Pregunta -->
+      <!-- Cuerpo -->
       <div id="quiz-body">
         <div class="flex justify-between items-center text-xs text-slate-500 font-semibold mb-3">
           <span id="quiz-progress-text">Pregunta 1 de 10</span>
@@ -251,14 +251,19 @@
           <div id="quiz-progress-bar" class="bg-blue-600 h-full w-10 transition-all duration-300"></div>
         </div>
 
-        <p id="quiz-question" class="text-lg font-bold text-slate-800 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+        <p id="quiz-question" class="text-base sm:text-lg font-bold text-slate-800 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
           <!-- Texto de pregunta -->
         </p>
 
-        <!-- Opciones de Respuesta -->
-        <div id="quiz-options" class="space-y-3 mb-6">
-          <!-- Botones de alternativas -->
+        <!-- Opciones -->
+        <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+          <!-- Botones/Checkboxes dinámicos -->
         </div>
+
+        <!-- Botón Comprobar para Preguntas de Selección Múltiple -->
+        <button id="btn-quiz-check" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition mb-4 hidden shadow-md">
+          Comprobar Respuestas ✓
+        </button>
 
         <!-- Retroalimentación -->
         <div id="quiz-feedback" class="hidden p-4 rounded-xl border text-sm mb-6">
@@ -272,7 +277,7 @@
         </button>
       </div>
 
-      <!-- Vista de Resultados Finales -->
+      <!-- Resultados Finales -->
       <div id="quiz-result" class="hidden text-center py-6">
         <div id="quiz-result-icon" class="text-5xl mb-4">🎯</div>
         <h4 id="quiz-result-title" class="text-2xl font-bold text-slate-800 mb-2">¡Evaluación Finalizada!</h4>
@@ -306,70 +311,50 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // BANCOS DE PREGUNTAS (QUIZ 1 - ADICIÓN Y QUIZ 2 - MULTIPLICACIÓN/DIVISIÓN)
+    // BANCOS DE PREGUNTAS (QUIZ 1, 2 Y 3)
     const quiz1Set1 = [
-      { q: "Calcula: -7 + (-4)", options: ["11", "-11", "-3", "3"], correct: 1, exp: "Al sumar dos números negativos, se suman sus valores absolutos (7 + 4 = 11) y se conserva el signo negativo: -11." },
-      { q: "Calcula: 12 + (-5)", options: ["17", "-7", "7", "-17"], correct: 2, exp: "Al sumar números con distinto signo, se restan sus valores absolutos (12 - 5 = 7) y se deja el signo del mayor: 7." },
-      { q: "Calcula: -15 + 8", options: ["-7", "7", "-23", "23"], correct: 0, exp: "Tienen distinto signo, restamos 15 - 8 = 7. Como -15 es mayor en valor absoluto, queda -7." },
-      { q: "Calcula: 9 - 14", options: ["5", "-23", "-5", "23"], correct: 2, exp: "Restar 14 equivale a 9 + (-14). Restamos 14 - 9 = 5 y conservamos el signo negativo de -14: -5." },
-      { q: "Calcula: -6 - (-10)", options: ["-16", "4", "-4", "16"], correct: 1, exp: "Restar un negativo equivale a sumar su opuesto: -6 + 10. Restamos 10 - 6 = 4." },
-      { q: "Calcula: -18 + (-2)", options: ["-16", "16", "-20", "20"], correct: 2, exp: "Ambos son negativos, sumamos 18 + 2 = 20 y mantenemos el signo negativo: -20." },
-      { q: "Calcula: 4 - (-7)", options: ["-3", "11", "-11", "3"], correct: 1, exp: "Restar (-7) se convierte en sumar +7: 4 + 7 = 11." },
-      { q: "Calcula: -20 + 20", options: ["0", "-40", "40", "1"], correct: 0, exp: "La suma de dos números opuestos siempre da como resultado 0." },
-      { q: "Calcula: -13 - 7", options: ["-6", "6", "-20", "20"], correct: 2, exp: "-13 - 7 equivale a -13 + (-7). Sumamos los valores 13 + 7 = 20 con signo negativo: -20." },
-      { q: "Calcula: 3 + (-11)", options: ["-8", "8", "-14", "14"], correct: 0, exp: "Restamos 11 - 3 = 8 y conservamos el signo de -11: -8." }
-    ];
-
-    const quiz1Set2 = [
-      { q: "Calcula: -9 + (-6)", options: ["15", "-15", "-3", "3"], correct: 1, exp: "Sumamos 9 + 6 = 15 y conservamos el signo negativo: -15." },
-      { q: "Calcula: 15 + (-9)", options: ["24", "-6", "6", "-24"], correct: 2, exp: "Restamos 15 - 9 = 6. Como 15 es mayor, queda positivo: 6." },
-      { q: "Calcula: -12 + 5", options: ["-7", "7", "-17", "17"], correct: 0, exp: "Restamos 12 - 5 = 7. Mantenemos el signo del -12: -7." },
-      { q: "Calcula: 8 - 15", options: ["7", "-23", "-7", "23"], correct: 2, exp: "Restar 15 equivale a 8 + (-15). Restamos 15 - 8 = 7 y queda negativo: -7." },
-      { q: "Calcula: -4 - (-9)", options: ["-13", "5", "-5", "13"], correct: 1, exp: "Equivale a -4 + 9. Restamos 9 - 4 = 5." },
-      { q: "Calcula: -11 + (-5)", options: ["-6", "6", "-16", "16"], correct: 2, exp: "Mismo signo negativo, sumamos 11 + 5 = 16: -16." },
-      { q: "Calcula: 6 - (-8)", options: ["-2", "14", "-14", "2"], correct: 1, exp: "Restar (-8) equivale a sumar +8: 6 + 8 = 14." },
-      { q: "Calcula: -14 + 14", options: ["0", "-28", "28", "1"], correct: 0, exp: "Números opuestos suman 0." },
-      { q: "Calcula: -8 - 6", options: ["-2", "2", "-14", "14"], correct: 2, exp: "Equivale a -8 + (-6) = -14." },
-      { q: "Calcula: 5 + (-12)", options: ["-7", "7", "-17", "17"], correct: 0, exp: "Restamos 12 - 5 = 7. Conservamos el signo del -12: -7." }
+      { type: 'single', q: "Calcula: -7 + (-4)", options: ["11", "-11", "-3", "3"], correct: 1, exp: "Al sumar dos números negativos, se suman sus valores absolutos (7 + 4 = 11) y se conserva el signo negativo: -11." },
+      { type: 'single', q: "Calcula: 12 + (-5)", options: ["17", "-7", "7", "-17"], correct: 2, exp: "Al sumar números con distinto signo, se restan sus valores absolutos (12 - 5 = 7) y se deja el signo del mayor: 7." },
+      { type: 'single', q: "Calcula: -15 + 8", options: ["-7", "7", "-23", "23"], correct: 0, exp: "Tienen distinto signo, restamos 15 - 8 = 7. Como -15 es mayor en valor absoluto, queda -7." },
+      { type: 'single', q: "Calcula: 9 - 14", options: ["5", "-23", "-5", "23"], correct: 2, exp: "Restar 14 equivale a 9 + (-14). Restamos 14 - 9 = 5 y conservamos el signo negativo de -14: -5." },
+      { type: 'single', q: "Calcula: -6 - (-10)", options: ["-16", "4", "-4", "16"], correct: 1, exp: "Restar un negativo equivale a sumar su opuesto: -6 + 10. Restamos 10 - 6 = 4." },
+      { type: 'single', q: "Calcula: -18 + (-2)", options: ["-16", "16", "-20", "20"], correct: 2, exp: "Ambos son negativos, sumamos 18 + 2 = 20 y mantenemos el signo negativo: -20." },
+      { type: 'single', q: "Calcula: 4 - (-7)", options: ["-3", "11", "-11", "3"], correct: 1, exp: "Restar (-7) se convierte en sumar +7: 4 + 7 = 11." },
+      { type: 'single', q: "Calcula: -20 + 20", options: ["0", "-40", "40", "1"], correct: 0, exp: "La suma de dos números opuestos siempre da como resultado 0." },
+      { type: 'single', q: "Calcula: -13 - 7", options: ["-6", "6", "-20", "20"], correct: 2, exp: "-13 - 7 equivale a -13 + (-7). Sumamos los valores 13 + 7 = 20 con signo negativo: -20." },
+      { type: 'single', q: "Calcula: 3 + (-11)", options: ["-8", "8", "-14", "14"], correct: 0, exp: "Restamos 11 - 3 = 8 y conservamos el signo de -11: -8." }
     ];
 
     const quiz2Set1 = [
-      { q: "Calcula: -6 · (-5)", options: ["-30", "30", "-11", "11"], correct: 1, exp: "Al multiplicar dos números negativos, el resultado es positivo: (-6) · (-5) = 30." },
-      { q: "Calcula: 8 · (-4)", options: ["32", "-12", "-32", "4"], correct: 2, exp: "Positivo por negativo da como resultado negativo: 8 · (-4) = -32." },
-      { q: "Calcula: -36 : (-9)", options: ["-4", "4", "-27", "27"], correct: 1, exp: "Al dividir dos números con el mismo signo negativo, el resultado es positivo: (-36) : (-9) = 4." },
-      { q: "Calcula: -48 : 6", options: ["-8", "8", "-42", "42"], correct: 0, exp: "Negativo dividido entre positivo da como resultado negativo: (-48) : 6 = -8." },
-      { q: "Calcula: -7 · 3", options: ["21", "-21", "-10", "10"], correct: 1, exp: "Negativo por positivo resulta negativo: (-7) · 3 = -21." },
-      { q: "Calcula: -15 : (-3)", options: ["-5", "5", "-12", "12"], correct: 1, exp: "Negativo dividido entre negativo da positivo: (-15) : (-3) = 5." },
-      { q: "Calcula: 9 · (-2)", options: ["-18", "18", "-7", "7"], correct: 0, exp: "Positivo por negativo resulta negativo: 9 · (-2) = -18." },
-      { q: "Calcula: 50 : (-10)", options: ["5", "-5", "-40", "40"], correct: 1, exp: "Positivo dividido entre negativo resulta negativo: 50 : (-10) = -5." },
-      { q: "Calcula: -4 · (-8)", options: ["-32", "32", "-12", "12"], correct: 1, exp: "Ambos números son negativos, por lo que su producto es positivo: (-4) · (-8) = 32." },
-      { q: "Calcula: -63 : 7", options: ["9", "-9", "-56", "56"], correct: 1, exp: "Distinto signo en la división da como resultado negativo: (-63) : 7 = -9." }
+      { type: 'single', q: "Calcula: -6 · (-5)", options: ["-30", "30", "-11", "11"], correct: 1, exp: "Al multiplicar dos números negativos, el resultado es positivo: (-6) · (-5) = 30." },
+      { type: 'single', q: "Calcula: 8 · (-4)", options: ["32", "-12", "-32", "4"], correct: 2, exp: "Positivo por negativo da como resultado negativo: 8 · (-4) = -32." },
+      { type: 'single', q: "Calcula: -36 : (-9)", options: ["-4", "4", "-27", "27"], correct: 1, exp: "Al dividir dos números con el mismo signo negativo, el resultado es positivo: (-36) : (-9) = 4." },
+      { type: 'single', q: "Calcula: -48 : 6", options: ["-8", "8", "-42", "42"], correct: 0, exp: "Negativo dividido entre positivo da como resultado negativo: (-48) : 6 = -8." },
+      { type: 'single', q: "Calcula: -7 · 3", options: ["21", "-21", "-10", "10"], correct: 1, exp: "Negativo por positivo resulta negativo: (-7) · 3 = -21." },
+      { type: 'single', q: "Calcula: -15 : (-3)", options: ["-5", "5", "-12", "12"], correct: 1, exp: "Negativo dividido entre negativo da positivo: (-15) : (-3) = 5." },
+      { type: 'single', q: "Calcula: 9 · (-2)", options: ["-18", "18", "-7", "7"], correct: 0, exp: "Positivo por negativo resulta negativo: 9 · (-2) = -18." },
+      { type: 'single', q: "Calcula: 50 : (-10)", options: ["5", "-5", "-40", "40"], correct: 1, exp: "Positivo dividido entre negativo resulta negativo: 50 : (-10) = -5." },
+      { type: 'single', q: "Calcula: -4 · (-8)", options: ["-32", "32", "-12", "12"], correct: 1, exp: "Ambos números son negativos, por lo que su producto es positivo: (-4) · (-8) = 32." },
+      { type: 'single', q: "Calcula: -63 : 7", options: ["9", "-9", "-56", "56"], correct: 1, exp: "Distinto signo en la división da como resultado negativo: (-63) : 7 = -9." }
     ];
 
-    const quiz2Set2 = [
-      { q: "Calcula: -7 · (-6)", options: ["-42", "42", "-13", "13"], correct: 1, exp: "Negativo por negativo da positivo: (-7) · (-6) = 42." },
-      { q: "Calcula: 6 · (-5)", options: ["30", "-11", "-30", "1"], correct: 2, exp: "Positivo por negativo da negativo: 6 · (-5) = -30." },
-      { q: "Calcula: -40 : (-8)", options: ["-5", "5", "-32", "32"], correct: 1, exp: "Negativo dividido entre negativo da positivo: (-40) : (-8) = 5." },
-      { q: "Calcula: -54 : 9", options: ["-6", "6", "-45", "45"], correct: 0, exp: "Negativo dividido entre positivo da negativo: (-54) : 9 = -6." },
-      { q: "Calcula: -8 · 4", options: ["32", "-32", "-4", "4"], correct: 1, exp: "Negativo por positivo da negativo: (-8) · 4 = -32." },
-      { q: "Calcula: -24 : (-4)", options: ["-6", "6", "-20", "20"], correct: 1, exp: "Negativo entre negativo da positivo: (-24) : (-4) = 6." },
-      { q: "Calcula: 7 · (-3)", options: ["-21", "21", "-10", "10"], correct: 0, exp: "Positivo por negativo da negativo: 7 · (-3) = -21." },
-      { q: "Calcula: 36 : (-6)", options: ["6", "-6", "-30", "30"], correct: 1, exp: "Positivo entre negativo da negativo: 36 : (-6) = -6." },
-      { q: "Calcula: -5 · (-9)", options: ["-45", "45", "-14", "14"], correct: 1, exp: "Negativo por negativo da positivo: (-5) · (-9) = 45." },
-      { q: "Calcula: -72 : 8", options: ["9", "-9", "-64", "64"], correct: 1, exp: "Negativo entre positivo da negativo: (-72) : 8 = -9." }
+    // QUIZ 3: TÉRMINOS SEMEJANTES (8 ALTERNATIVAS CON NÚMEROS RACIONALES/ENTEROS SIN FACTOR LITERAL)
+    const quiz3Set1 = [
+      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes al número: -7", options: ["15", "-7x", "3/4", "-2,5", "7y", "0", "-7x⁰", "a"], correct: [0, 2, 3, 5, 6], exp: "Todos los números constantes (sin variable o con exponente 0) son semejantes entre sí." },
+      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: 4x²y", options: ["-x²y", "4xy²", "9yx²", "-4x²", "(1/3)x²y", "-4", "2yx²", "x²y²"], correct: [0, 2, 4, 6], exp: "La factor literal requerida es x²y (o yx²)." },
+      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a la fracción: 2/5", options: ["-18", "(2/5)a", "0,75", "-1/2", "100", "(5/2)x", "-0,3", "x"], correct: [0, 2, 3, 4, 6], exp: "2/5 es una constante, por lo que cualquier entero, fracción o decimal puro es semejante." },
+      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: -3ab³", options: ["8ab³", "-3a³b", "b³a", "-ab³", "3ab", "-5b³a", "a³b³", "-3"], correct: [0, 2, 3, 5], exp: "La parte literal debe contener a con exponente 1 y b con exponente 3." },
+      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: 6m⁴n²", options: ["-m⁴n²", "6m²n⁴", "15n²m⁴", "(2/3)m⁴n²", "-6mn", "-8m⁴n²", "6", "m²n²"], correct: [0, 2, 3, 5], exp: "Deben conservar m⁴ y n²." },
+      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: -a²b²", options: ["5a²b²", "-2ab", "b²a²", "-a²b³", "-(7/2)a²b²", "a²+b²", "-10b²a²", "-1"], correct: [0, 2, 4, 6], exp: "Términos con factor literal a²b²." },
+      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes al número decimal: -1,5", options: ["3", "-1,5x", "8/3", "-99", "1,5y²", "0,001", "-1,5", "a/b"], correct: [0, 2, 3, 5, 6], exp: "Todos los números racionales puros (constantes) son semejantes." },
+      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: -xyz²", options: ["4xyz²", "-z²xy", "-x²yz", "(1/2)z²yx", "-xyz", "10yz²x", "z²", "-2"], correct: [0, 1, 3, 5], exp: "Términos con x, y y z²." },
+      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: 9w³z⁴", options: ["-2w³z⁴", "9z⁴w³", "w⁴z³", "11w³z⁴", "-w³z⁴", "9", "z⁴w³", "wz"], correct: [0, 1, 3, 4, 6], exp: "Exponentes requeridos: w³ y z⁴." },
+      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: -2cd³e²", options: ["cd³e²", "-2c³de²", "5e²d³c", "-d³e²c", "(1/4)ce²d³", "-2", "c²d³e²", "-cd³e²"], correct: [0, 2, 3, 4, 7], exp: "Factores literales: c, d³ y e²." }
     ];
 
     // MÓDULOS DE 1RO MEDIO
     const modulesData = {
-      mod1: {
-        tag: "Módulo 01",
-        title: "Módulo 1: Números",
-        desc: "Aprende operaciones fundamentales con números racionales y potencias.",
-        oas: [
-          { id: "oa1", title: "OA 1: Cálculo con números racionales", desc: "Conceptos, operaciones combinadas y simplificación de fracciones.", material: "<p class='text-sm text-slate-600 mb-2'>Material sugerido para OA 1:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-medium text-xs px-4 py-2.5 rounded-xl'>📄 Descargar Guía OA 1 (PDF)</a></div>" },
-          { id: "oa2", title: "OA 2: Potencias de base racional y exponente entero", desc: "Propiedades de las potencias, multiplicación y división con exponente entero.", material: "<p class='text-sm text-slate-600 mb-2'>Material sugerido para OA 2:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-medium text-xs px-4 py-2.5 rounded-xl'>🎥 Ver Video Explicativo OA 2</a></div>" }
-        ]
-      },
+      mod1: { tag: "Módulo 01", title: "Módulo 1: Números", desc: "Aprende operaciones fundamentales.", oas: [] },
       mod2: {
         tag: "Módulo 02",
         title: "Módulo 2: Álgebra y Funciones",
@@ -383,79 +368,48 @@
               <div class="space-y-3">
                 <p class="text-sm text-slate-600 font-medium">Material disponible para este objetivo:</p>
                 <div class="flex flex-col gap-2.5">
-                  <a href="https://drive.google.com/file/d/1kpkbTLRW7F0Wwx7rbVDE7rIhu67lxHKr/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    📄 1° Introducción ↗
-                  </a>
-                  <a href="https://drive.google.com/file/d/1wdpLSsrd6B3_knpKSnm5Wp-R2K3sGZzI/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 2° Regla de los signos para la adición 1 ↗
-                  </a>
-                  <a href="https://drive.google.com/file/d/1MMsDMcNsBkBMh2gQYjYQ3nAq7FHeQ1wp/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 3° Regla de los signos para la adición 2 ↗
-                  </a>
-                  
-                  <!-- PDF DE RESUMEN -->
-                  <a href="https://drive.google.com/file/d/1zv9XtunI3_kUzBtgQueoyrtp84dfQUQP/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    📄 Resumen regla de los signos (PDF) ↗
-                  </a>
+                  <a href="https://drive.google.com/file/d/1kpkbTLRW7F0Wwx7rbVDE7rIhu67lxHKr/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">📄 1° Introducción ↗</a>
+                  <a href="https://drive.google.com/file/d/1wdpLSsrd6B3_knpKSnm5Wp-R2K3sGZzI/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 2° Regla de los signos para la adición 1 ↗</a>
+                  <a href="https://drive.google.com/file/d/1MMsDMcNsBkBMh2gQYjYQ3nAq7FHeQ1wp/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 3° Regla de los signos para la adición 2 ↗</a>
+                  <a href="https://drive.google.com/file/d/1zv9XtunI3_kUzBtgQueoyrtp84dfQUQP/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">📄 Resumen regla de los signos (PDF) ↗</a>
 
-                  <!-- EVALUACIÓN INTERACTIVA N°1 -->
+                  <!-- EVALUACIÓN 1 -->
                   <button class="btn-start-quiz-1 w-full inline-flex items-center justify-between bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs px-4 py-3.5 rounded-xl transition shadow-md my-1">
                     <span class="flex items-center gap-2">📝 Evaluación Interactiva N°1: Regla de los Signos (Adición)</span>
                     <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px]">10 Ejercicios</span>
                   </button>
 
-                  <a href="https://drive.google.com/file/d/1nqrVmhOcoV70aHg-piKB3pb5HrOr9y1B/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 4° Regla de los signos para la multiplicación y división ↗
-                  </a>
+                  <a href="https://drive.google.com/file/d/1nqrVmhOcoV70aHg-piKB3pb5HrOr9y1B/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 4° Regla de los signos para la multiplicación y división ↗</a>
 
-                  <!-- EVALUACIÓN INTERACTIVA N°2 TRAS EL 4TO CONTENIDO -->
+                  <!-- EVALUACIÓN 2 -->
                   <button class="btn-start-quiz-2 w-full inline-flex items-center justify-between bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold text-xs px-4 py-3.5 rounded-xl transition shadow-md my-1">
                     <span class="flex items-center gap-2">📝 Evaluación Interactiva N°2: Multiplicación y División</span>
                     <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px]">10 Ejercicios</span>
                   </button>
 
-                  <a href="https://drive.google.com/file/d/13FwJPgItioQBNvCcukHvCcVJq93wIuy2/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 5° Términos algebraicos semejantes ↗
-                  </a>
-                  <a href="https://drive.google.com/file/d/1hwjM8wRil98UA3AIsFUV96_BGl4G3SK0/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 6° Reducción de términos semejantes ↗
-                  </a>
-                  <a href="https://drive.google.com/file/d/1mQqAjblOAozFnWsu5tTbAgOGLrBllceG/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 7° Propiedades de las potencias ↗
-                  </a>
-                  <a href="https://drive.google.com/file/d/1q13YPnvCzgVbRn4L7EwcB3mulHffGLw2/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 8° Propiedad distributiva ↗
-                  </a>
-                  <a href="https://drive.google.com/file/d/1oNlMqHIpKMHApwTUFO36Drq16yzaa9MQ/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 9° Productos notables - término común ↗
-                  </a>
-                  <a href="https://drive.google.com/file/d/1fUcOUoEKEoL5kvmWBHu-YKerq75kRqPf/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 10° Productos notables - cuadrado de binomio ↗
-                  </a>
-                  <a href="https://drive.google.com/file/d/1uCG8uFlJsCGWNWAVIqV47ZAAV4zprfEA/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 11° Productos notables - suma por su diferencia ↗
-                  </a>
-                  <a href="https://drive.google.com/file/d/1OmlYXZtwpROF6fct05YpSAqa9A_2pnjr/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 12° Productos notables pictóricamente ↗
-                  </a>
-                  <a href="https://drive.google.com/file/d/1eXzIvk-8GmfqF2wsrUwkzlQqCE_awX3R/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 13° Identificación de productos notables ↗
-                  </a>
-                  <a href="https://drive.google.com/file/d/1ZJoBcwN6wZRlB5R7xfeGn7pRjvGvNasH/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 14° Factorización de trinomios ↗
-                  </a>
-                  <a href="https://drive.google.com/file/d/1MCgrA4uR__pWaxdQQuupR-1er3Kjzgn4/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 15° Factorización binomio por término común ↗
-                  </a>
-                  <a href="https://drive.google.com/file/d/1tEV7yPkgF9YlGfjprfbzUH1ys7HAAhoS/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">
-                    🎥 16° Factorización diferencia de cuadrados (suma por su diferencia) ↗
-                  </a>
+                  <a href="https://drive.google.com/file/d/13FwJPgItioQBNvCcukHvCcVJq93wIuy2/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 5° Términos algebraicos semejantes ↗</a>
+
+                  <!-- EVALUACIÓN 3 (8 ALTERNATIVAS) -->
+                  <button class="btn-start-quiz-3 w-full inline-flex items-center justify-between bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold text-xs px-4 py-3.5 rounded-xl transition shadow-md my-1">
+                    <span class="flex items-center gap-2">📝 Evaluación Interactiva N°3: Términos Semejantes</span>
+                    <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px]">8 Opciones (A-H)</span>
+                  </button>
+
+                  <a href="https://drive.google.com/file/d/1hwjM8wRil98UA3AIsFUV96_BGl4G3SK0/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 6° Reducción de términos semejantes ↗</a>
+                  <a href="https://drive.google.com/file/d/1mQqAjblOAozFnWsu5tTbAgOGLrBllceG/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 7° Propiedades de las potencias ↗</a>
+                  <a href="https://drive.google.com/file/d/1q13YPnvCzgVbRn4L7EwcB3mulHffGLw2/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 8° Propiedad distributiva ↗</a>
+                  <a href="https://drive.google.com/file/d/1oNlMqHIpKMHApwTUFO36Drq16yzaa9MQ/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 9° Productos notables - término común ↗</a>
+                  <a href="https://drive.google.com/file/d/1fUcOUoEKEoL5kvmWBHu-YKerq75kRqPf/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 10° Productos notables - cuadrado de binomio ↗</a>
+                  <a href="https://drive.google.com/file/d/1uCG8uFlJsCGWNWAVIqV47ZAAV4zprfEA/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 11° Productos notables - suma por su diferencia ↗</a>
+                  <a href="https://drive.google.com/file/d/1OmlYXZtwpROF6fct05YpSAqa9A_2pnjr/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 12° Productos notables pictóricamente ↗</a>
+                  <a href="https://drive.google.com/file/d/1eXzIvk-8GmfqF2wsrUwkzlQqCE_awX3R/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 13° Identificación de productos notables ↗</a>
+                  <a href="https://drive.google.com/file/d/1ZJoBcwN6wZRlB5R7xfeGn7pRjvGvNasH/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 14° Factorización de trinomios ↗</a>
+                  <a href="https://drive.google.com/file/d/1MCgrA4uR__pWaxdQQuupR-1er3Kjzgn4/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 15° Factorización binomio por término común ↗</a>
+                  <a href="https://drive.google.com/file/d/1tEV7yPkgF9YlGfjprfbzUH1ys7HAAhoS/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 16° Factorización diferencia de cuadrados (suma por su diferencia) ↗</a>
                 </div>
               </div>
             ` 
-          },
-          { id: "oa4", title: "OA 4: Sistemas de ecuaciones", desc: "Métodos de resolución: reducción, sustitución e igualación.", material: "<p class='text-sm text-slate-600 mb-2'>Material de apoyo:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-semibold text-xs px-4 py-3 rounded-xl'>📄 Ejercicios Resueltos OA 4</a></div>" },
-          { id: "oa5", title: "OA 5: Gráficas de funciones f(x,y) = ax + by", desc: "Representación en el plano cartesiano e interpretación de pendientes.", material: "<p class='text-sm text-slate-600 mb-2'>Material de apoyo:</p><div class='flex flex-col gap-2.5'><a href='#' target='_blank' class='w-full inline-flex items-center gap-2 bg-blue-600 text-white font-semibold text-xs px-4 py-3 rounded-xl'>📊 Simulador Interactivo OA 5</a></div>" }
+          }
         ]
       },
       mod3: { tag: "Módulo 03", title: "Módulo 3: Geometría", desc: "Estudio de figuras geométricas.", oas: [] },
@@ -476,21 +430,25 @@
       }
     });
 
-    // VARIABLES Y CONTROL DEL QUIZ
+    // VARIABLES DEL QUIZ
     let activeQuestions = [];
     let currentQIndex = 0;
     let score = 0;
     let attemptCount = 1;
-    let currentQuizType = 1; // 1 o 2
+    let currentQuizType = 1;
+    let selectedMultipleOptions = [];
 
     function startQuiz(type) {
       currentQuizType = type;
       if (type === 1) {
         document.getElementById('quiz-header-title').innerText = "Regla de los Signos para la Adición";
-        activeQuestions = attemptCount === 1 ? [...quiz1Set1] : [...quiz1Set2];
-      } else {
+        activeQuestions = [...quiz1Set1];
+      } else if (type === 2) {
         document.getElementById('quiz-header-title').innerText = "Multiplicación y División de Enteros";
-        activeQuestions = attemptCount === 1 ? [...quiz2Set1] : [...quiz2Set2];
+        activeQuestions = [...quiz2Set1];
+      } else {
+        document.getElementById('quiz-header-title').innerText = "Identificación de Términos Semejantes";
+        activeQuestions = [...quiz3Set1];
       }
 
       currentQIndex = 0;
@@ -512,23 +470,48 @@
 
       const optsContainer = document.getElementById('quiz-options');
       optsContainer.innerHTML = '';
-
-      q.options.forEach((optText, index) => {
-        const btn = document.createElement('button');
-        btn.className = 'quiz-opt-btn w-full text-left px-4 py-3 border-2 border-slate-200 rounded-xl hover:border-blue-500 font-semibold text-slate-700 text-sm transition';
-        btn.innerText = `${String.fromCharCode(65 + index)})  ${optText}`;
-        btn.addEventListener('click', () => selectAnswer(index));
-        optsContainer.appendChild(btn);
-      });
+      selectedMultipleOptions = [];
 
       document.getElementById('quiz-feedback').classList.add('hidden');
       document.getElementById('btn-quiz-next').classList.add('hidden');
+
+      if (q.type === 'single') {
+        optsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6";
+        document.getElementById('btn-quiz-check').classList.add('hidden');
+        q.options.forEach((optText, index) => {
+          const btn = document.createElement('button');
+          btn.className = 'quiz-opt-btn w-full text-left px-4 py-3 border-2 border-slate-200 rounded-xl hover:border-blue-500 font-semibold text-slate-700 text-sm transition';
+          btn.innerText = `${String.fromCharCode(65 + index)})  ${optText}`;
+          btn.addEventListener('click', () => selectSingleAnswer(index));
+          optsContainer.appendChild(btn);
+        });
+      } else {
+        // Opción múltiple con 8 alternativas
+        optsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6";
+        document.getElementById('btn-quiz-check').classList.remove('hidden');
+        q.options.forEach((optText, index) => {
+          const btn = document.createElement('div');
+          btn.className = 'quiz-opt-chk flex items-center gap-3 px-3.5 py-2.5 border-2 border-slate-200 rounded-xl font-semibold text-slate-700 text-xs cursor-pointer hover:border-purple-500 transition';
+          btn.innerHTML = `<input type="checkbox" class="w-4 h-4 text-purple-600 rounded" id="chk-${index}"> <label class="cursor-pointer flex-1" for="chk-${index}">${String.fromCharCode(65 + index)}) ${optText}</label>`;
+          
+          const chk = btn.querySelector('input');
+          chk.addEventListener('change', () => {
+            if (chk.checked) {
+              if (!selectedMultipleOptions.includes(index)) selectedMultipleOptions.push(index);
+              btn.classList.add('border-purple-500', 'bg-purple-50');
+            } else {
+              selectedMultipleOptions = selectedMultipleOptions.filter(i => i !== index);
+              btn.classList.remove('border-purple-500', 'bg-purple-50');
+            }
+          });
+          optsContainer.appendChild(btn);
+        });
+      }
     }
 
-    function selectAnswer(selectedIndex) {
+    function selectSingleAnswer(selectedIndex) {
       const q = activeQuestions[currentQIndex];
       const allBtns = document.querySelectorAll('.quiz-opt-btn');
-      
       allBtns.forEach(b => b.classList.add('pointer-events-none', 'opacity-60'));
 
       const feedbackBox = document.getElementById('quiz-feedback');
@@ -545,6 +528,36 @@
         allBtns[q.correct].className = 'quiz-opt-btn w-full text-left px-4 py-3 border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold text-sm rounded-xl';
         feedbackBox.className = 'p-4 rounded-xl border border-red-200 bg-red-50 text-red-900 text-sm mb-6';
         feedbackText.innerText = 'Respuesta Incorrecta ❌';
+      }
+
+      feedbackExp.innerText = q.exp;
+      feedbackBox.classList.remove('hidden');
+      document.getElementById('btn-quiz-next').classList.remove('hidden');
+    }
+
+    function checkMultipleAnswer() {
+      const q = activeQuestions[currentQIndex];
+      const feedbackBox = document.getElementById('quiz-feedback');
+      const feedbackText = document.getElementById('quiz-feedback-text');
+      const feedbackExp = document.getElementById('quiz-feedback-exp');
+
+      document.getElementById('btn-quiz-check').classList.add('hidden');
+      const chks = document.querySelectorAll('.quiz-opt-chk input');
+      chks.forEach(c => c.disabled = true);
+
+      // Comprobar coincidencia exacta
+      const sortedSelected = [...selectedMultipleOptions].sort();
+      const sortedCorrect = [...q.correct].sort();
+      const isCorrect = JSON.stringify(sortedSelected) === JSON.stringify(sortedCorrect);
+
+      if (isCorrect) {
+        score++;
+        feedbackBox.className = 'p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 text-sm mb-6';
+        feedbackText.innerText = '¡Perfecto! Seleccionaste todas las respuestas correctas 🎉';
+      } else {
+        feedbackBox.className = 'p-4 rounded-xl border border-red-200 bg-red-50 text-red-900 text-sm mb-6';
+        const correctLetters = q.correct.map(i => String.fromCharCode(65 + i)).join(', ');
+        feedbackText.innerText = `Respuesta Incorrecta ❌. Las opciones correctas eran: ${correctLetters}`;
       }
 
       feedbackExp.innerText = q.exp;
@@ -647,24 +660,18 @@
       }
 
       // Eventos Iniciar Quizzes
-      if (e.target && e.target.closest('.btn-start-quiz-1')) {
-        attemptCount = 1;
-        startQuiz(1);
-      }
-      if (e.target && e.target.closest('.btn-start-quiz-2')) {
-        attemptCount = 1;
-        startQuiz(2);
-      }
+      if (e.target && e.target.closest('.btn-start-quiz-1')) { attemptCount = 1; startQuiz(1); }
+      if (e.target && e.target.closest('.btn-start-quiz-2')) { attemptCount = 1; startQuiz(2); }
+      if (e.target && e.target.closest('.btn-start-quiz-3')) { attemptCount = 1; startQuiz(3); }
+
+      // Comprobar Respuesta Múltiple
+      if (e.target && e.target.id === 'btn-quiz-check') { checkMultipleAnswer(); }
 
       // Siguiente Pregunta
-      if (e.target && e.target.id === 'btn-quiz-next') {
-        nextQuestion();
-      }
+      if (e.target && e.target.id === 'btn-quiz-next') { nextQuestion(); }
 
       // Cerrar Modal
-      if (e.target && e.target.id === 'btn-close-quiz') {
-        document.getElementById('quiz-modal').classList.add('hidden');
-      }
+      if (e.target && e.target.id === 'btn-close-quiz') { document.getElementById('quiz-modal').classList.add('hidden'); }
     });
 
     // AUTENTICACIÓN
