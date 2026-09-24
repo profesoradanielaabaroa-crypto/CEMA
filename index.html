@@ -316,7 +316,7 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // FUNCIONES MATEMÁTICAS Y FORMATO PARA GENERACIÓN DINÁMICA DE EJERCICIOS
+    // FUNCIONES MATEMÁTICAS Y FORMATO DE POTENCIAS / FRACCIONES
     function mcd(a, b) {
       a = Math.abs(a); b = Math.abs(b);
       while (b) { let t = b; b = a % b; a = t; }
@@ -338,11 +338,18 @@
       return `$${sign}\\frac{${n}}{${d}}${varName}$`;
     }
 
+    // FORMATEADOR DE TÉRMINOS CON EXPONENTE 0 Y 1 (SIN MOSTRAR ELEVADO A 1)
+    function formatVarPow(v, exp) {
+      if (exp === 0) return "";
+      if (exp === 1) return v; // REGLA: No coloca exponente si es 1
+      return `${v}^{${exp}}`;
+    }
+
     // -------------------------------------------------------------
     // GENERADORES DINÁMICOS Y ALEATORIOS PARA CADA EVALUACIÓN
     // -------------------------------------------------------------
 
-    // GENERADOR EVALUACIÓN 1: ADICIÓN Y SUSTRACCIÓN DE ENTEROS
+    // EVALUACIÓN 1: ADICIÓN Y SUSTRACCIÓN DE ENTEROS
     function generateQuiz1Set() {
       const questions = [];
       for (let i = 0; i < 10; i++) {
@@ -375,7 +382,7 @@
       return questions;
     }
 
-    // GENERADOR EVALUACIÓN 2: MULTIPLICACIÓN Y DIVISIÓN DE ENTEROS
+    // EVALUACIÓN 2: MULTIPLICACIÓN Y DIVISIÓN DE ENTEROS
     function generateQuiz2Set() {
       const questions = [];
       for (let i = 0; i < 10; i++) {
@@ -417,7 +424,7 @@
       return questions;
     }
 
-    // GENERADOR EVALUACIÓN 3: IDENTIFICACIÓN DE TÉRMINOS SEMEJANTES (SELECCIÓN MÚLTIPLE A-H)
+    // EVALUACIÓN 3: IDENTIFICACIÓN DE TÉRMINOS SEMEJANTES (SELECCIÓN MÚLTIPLE A-H)
     function generateQuiz3Set() {
       const baseLiterals = ["x^2y", "ab^3", "m^4n^2", "xyz^2", "w^3z^4", "cd^3e^2"];
       const questions = [];
@@ -430,13 +437,11 @@
         let correctList = [];
         let distractors = [];
 
-        // Crear 4 semejantes correctos
         for (let c = 0; c < 4; c++) {
           let coef = (Math.floor(Math.random() * 15) - 7) || 2;
           correctList.push(`$${coef}${lit}$`);
         }
 
-        // Crear 4 distractores
         distractors.push(`$${coefBase}${lit.replace('2', '3')}$`);
         distractors.push(`$${coefBase}${lit.slice(0, -1)}$`);
         distractors.push(`$${coefBase}$`);
@@ -459,7 +464,7 @@
       return questions;
     }
 
-    // GENERADOR EVALUACIÓN 4: REDUCCIÓN DE TÉRMINOS SEMEJANTES (ENTEROS Y FRACCIONES 2, 4, 5, 10)
+    // EVALUACIÓN 4: REDUCCIÓN DE TÉRMINOS SEMEJANTES
     function generateQuiz4Set() {
       const vars = ['x', 'y', 'a', 'b', 'm', 'p', 'k', 'w'];
       const denoms = [2, 4, 5, 10];
@@ -541,6 +546,191 @@
       return questions;
     }
 
+    // EVALUACIÓN 5: PROPIEDADES DE LAS POTENCIAS (10 EJERCICIOS ALEATORIOS)
+    function generateQuiz5Set() {
+      const singleVars = ['x', 'a', 'm'];
+      const pairVars = [ ['x','y'], ['a','b'], ['m','n'] ];
+      const denoms = [2, 3, 4, 5];
+      const questions = [];
+
+      // EXACTAMENTE 1 EJERCICIO DEL LOTE ES MULTIPLICACIÓN DE ENTERO POR TÉRMINO ALGEBRAICO
+      const intMultIndex = Math.floor(Math.random() * 10);
+
+      for (let i = 0; i < 10; i++) {
+        if (i === intMultIndex) {
+          // EJERCICIO ESPECIAL: ENTERO X TÉRMINO ALGEBRAICO
+          let k = (Math.floor(Math.random() * 8) + 2); // Entero 2 a 9
+          let coef = (Math.floor(Math.random() * 6) + 2); // Coeficiente 2 a 7
+          let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
+          let e1 = Math.floor(Math.random() * 4) + 1;
+          let e2 = Math.floor(Math.random() * 4) + 1;
+
+          let prodCoef = k * coef;
+          let exprStr = `Simplifica: $${k} \\cdot (${coef}${formatVarPow(pair[0], e1)}${formatVarPow(pair[1], e2)})$`;
+          let resStr = `$${prodCoef}${formatVarPow(pair[0], e1)}${formatVarPow(pair[1], e2)}$`;
+
+          let optsSet = new Set([resStr]);
+          optsSet.add(`$${k + coef}${formatVarPow(pair[0], e1)}${formatVarPow(pair[1], e2)}$`);
+          optsSet.add(`$${prodCoef}${formatVarPow(pair[0], e1 + 1)}${formatVarPow(pair[1], e2)}$`);
+          optsSet.add(`$${prodCoef}${formatVarPow(pair[0], e1)}${formatVarPow(pair[1], e2 + 1)}$`);
+
+          let shuffledOpts = Array.from(optsSet).sort(() => Math.random() - 0.5);
+
+          questions.push({
+            type: 'single',
+            q: exprStr,
+            options: shuffledOpts,
+            correct: shuffledOpts.indexOf(resStr),
+            exp: `Multiplicamos el entero por el coeficiente del término: $${k} \\cdot ${coef} = ${prodCoef}$. Mantenemos la factor literal intacta.`
+          });
+          continue;
+        }
+
+        // TIPO DE EJERCICIO
+        let rType = Math.random();
+
+        if (rType < 0.25) {
+          // PROPIEDAD: EXPONENTE 0
+          let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
+          let mode = Math.random();
+
+          if (mode < 0.5) {
+            // Todo elevado a 0
+            let exprStr = `Aplica las propiedades de las potencias: $(${pair[0]}^3 ${pair[1]}^2)^0$`;
+            let resStr = `$1$`;
+            let shuffledOpts = ["$1$", "$0$", `$${pair[0]}^3 ${pair[1]}^2$`, `$${pair[0]} ${pair[1]}$`].sort(() => Math.random() - 0.5);
+            questions.push({
+              type: 'single',
+              q: exprStr,
+              options: shuffledOpts,
+              correct: shuffledOpts.indexOf(resStr),
+              exp: `Todo término no nulo elevado a la potencia $0$ es igual a $1$.`
+            });
+          } else {
+            // Solo una letra elevada a 0
+            let e1 = Math.floor(Math.random() * 4) + 2;
+            let exprStr = `Aplica las propiedades de las potencias: $${pair[0]}^{${e1}} ${pair[1]}^0$`;
+            let resStr = `$${formatVarPow(pair[0], e1)}$`;
+            let shuffledOpts = [`$${formatVarPow(pair[0], e1)}$`, `$1$`, `$0$`, `$${formatVarPow(pair[0], e1)}${pair[1]}$`].sort(() => Math.random() - 0.5);
+            questions.push({
+              type: 'single',
+              q: exprStr,
+              options: shuffledOpts,
+              correct: shuffledOpts.indexOf(resStr),
+              exp: `Como $${pair[1]}^0 = 1$, la expresión equivale a $${formatVarPow(pair[0], e1)} \\cdot 1 = ${formatVarPow(pair[0], e1)}$.`
+            });
+          }
+
+        } else if (rType < 0.60) {
+          // PROPIEDAD: MULTIPLICACIÓN DE IGUAL BASE (APLICACIÓN EN TODO O SOLO UNA LETRA)
+          let useFrac = Math.random() < 0.35;
+          let den = denoms[Math.floor(Math.random() * denoms.length)];
+          let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
+
+          let eA1 = Math.floor(Math.random() * 4) + 1;
+          let eA2 = Math.floor(Math.random() * 4) + 1;
+          let sumA = eA1 + eA2;
+
+          let eB1 = Math.floor(Math.random() * 3) + 1;
+          let eB2 = Math.floor(Math.random() * 3) + 1;
+          let sumB = eB1 + eB2;
+
+          let isSingleLetter = Math.random() < 0.5;
+
+          if (isSingleLetter) {
+            // Solo una letra cambia
+            let exprStr = useFrac ? 
+              `Simplifica: $\\frac{1}{${den}} ${pair[0]}^{${eA1}} ${pair[1]}^{${eB1}} \\cdot ${pair[0]}^{${eA2}} ${pair[1]}^{${eB1}}$` :
+              `Simplifica: $${pair[0]}^{${eA1}} ${pair[1]}^{${eB1}} \\cdot ${pair[0]}^{${eA2}}$`;
+
+            let varPart = `${formatVarPow(pair[0], sumA)}${isSingleLetter && !useFrac ? formatVarPow(pair[1], eB1) : formatVarPow(pair[1], sumB)}`;
+            let resStr = useFrac ? formatFrac(1, den, varPart) : `$${varPart}$`;
+
+            let optsSet = new Set([resStr]);
+            let varWrong1 = `${formatVarPow(pair[0], eA1 * eA2)}${formatVarPow(pair[1], eB1)}`;
+            optsSet.add(useFrac ? formatFrac(1, den, varWrong1) : `$${varWrong1}$`);
+
+            let varWrong2 = `${formatVarPow(pair[0], sumA + 1)}${formatVarPow(pair[1], eB1)}`;
+            optsSet.add(useFrac ? formatFrac(1, den, varWrong2) : `$${varWrong2}$`);
+
+            let varWrong3 = `${formatVarPow(pair[0], sumA)}${formatVarPow(pair[1], eB1 + 1)}`;
+            optsSet.add(useFrac ? formatFrac(1, den, varWrong3) : `$${varWrong3}$`);
+
+            let shuffledOpts = Array.from(optsSet).sort(() => Math.random() - 0.5);
+
+            questions.push({
+              type: 'single',
+              q: exprStr,
+              options: shuffledOpts,
+              correct: shuffledOpts.indexOf(resStr),
+              exp: `Multiplicación de igual base: conservamos la base $${pair[0]}$ y sumamos los exponentes $${eA1} + ${eA2} = ${sumA}$.`
+            });
+
+          } else {
+            // Todo el coeficiente literal cambia
+            let exprStr = useFrac ? 
+              `Aplica la propiedad: $(\\frac{1}{${den}} ${pair[0]} ${pair[1]})^{${eA1}} \\cdot (${pair[0]} ${pair[1]})^{${eA2}}$` :
+              `Aplica la propiedad: $(${pair[0]} ${pair[1]})^{${eA1}} \\cdot (${pair[0]} ${pair[1]})^{${eA2}}$`;
+
+            let varPart = `(${pair[0]} ${pair[1]})^{${sumA}}`;
+            let resStr = useFrac ? formatFrac(1, den, varPart) : `$${varPart}$`;
+
+            let optsSet = new Set([resStr]);
+            optsSet.add(useFrac ? formatFrac(1, den, `(${pair[0]} ${pair[1]})^{${eA1 * eA2}}`) : `$(${pair[0]} ${pair[1]})^{${eA1 * eA2}}$`);
+            optsSet.add(useFrac ? formatFrac(1, den, `(${pair[0]} ${pair[1]})^{${sumA + 1}}`) : `$(${pair[0]} ${pair[1]})^{${sumA + 1}}$`);
+            optsSet.add(useFrac ? formatFrac(1, den, `${pair[0]}^{${sumA}} ${pair[1]}`) : `$${pair[0]}^{${sumA}} ${pair[1]}$`);
+
+            let shuffledOpts = Array.from(optsSet).sort(() => Math.random() - 0.5);
+
+            questions.push({
+              type: 'single',
+              q: exprStr,
+              options: shuffledOpts,
+              correct: shuffledOpts.indexOf(resStr),
+              exp: `Al multiplicar potencias de igual base $( ${pair[0]} ${pair[1]} )$, conservamos la base y sumamos sus exponentes: $${eA1} + ${eA2} = ${sumA}$.`
+            });
+          }
+
+        } else {
+          // PROPIEDAD: DIVISIÓN DE IGUAL BASE
+          let useFrac = Math.random() < 0.35;
+          let den = denoms[Math.floor(Math.random() * denoms.length)];
+          let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
+
+          let diffA = Math.floor(Math.random() * 4) + 1; // Resultado del exponente
+          let eA2 = Math.floor(Math.random() * 3) + 1;
+          let eA1 = eA2 + diffA;
+
+          let eB = Math.floor(Math.random() * 3) + 2;
+
+          let exprStr = useFrac ?
+            `Simplifica: $\\frac{\\frac{1}{${den}} ${pair[0]}^{${eA1}} ${pair[1]}^{${eB}}}{${pair[0]}^{${eA2}} ${pair[1]}^{${eB}}}$` :
+            `Simplifica: $\\frac{${pair[0]}^{${eA1}} ${pair[1]}^{${eB}}}{${pair[0]}^{${eA2}} ${pair[1]}^{${eB}}}$`;
+
+          // Recuerda regla: si diffA es 1, formatVarPow no muestra exponente 1
+          let varPart = `${formatVarPow(pair[0], diffA)}`; 
+          let resStr = useFrac ? formatFrac(1, den, varPart) : `$${varPart}$`;
+
+          let optsSet = new Set([resStr]);
+          optsSet.add(useFrac ? formatFrac(1, den, formatVarPow(pair[0], eA1 + eA2)) : `$${formatVarPow(pair[0], eA1 + eA2)}$`);
+          optsSet.add(useFrac ? formatFrac(1, den, `${formatVarPow(pair[0], diffA)}${pair[1]}`) : `$${formatVarPow(pair[0], diffA)}${pair[1]}$`);
+          optsSet.add(useFrac ? formatFrac(1, den, formatVarPow(pair[0], diffA + 1)) : `$${formatVarPow(pair[0], diffA + 1)}$`);
+
+          let shuffledOpts = Array.from(optsSet).sort(() => Math.random() - 0.5);
+
+          questions.push({
+            type: 'single',
+            q: exprStr,
+            options: shuffledOpts,
+            correct: shuffledOpts.indexOf(resStr),
+            exp: `En la división de potencias de igual base, restamos exponentes: $${eA1} - ${eA2} = ${diffA}$. ${diffA === 1 ? 'Como el exponente es 1, no se escribe.' : ''} Las bases iguales $${pair[1]}^{${eB}}$ se simplifican.`
+          });
+        }
+      }
+
+      return questions;
+    }
+
     // MÓDULOS DE 1RO MEDIO
     const modulesData = {
       mod1: { tag: "Módulo 01", title: "Módulo 1: Números", desc: "Aprende operaciones fundamentales.", oas: [] },
@@ -593,6 +783,13 @@
                   </button>
 
                   <a href="https://drive.google.com/file/d/1mQqAjblOAozFnWsu5tTbAgOGLrBllceG/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 7° Propiedades de las potencias ↗</a>
+
+                  <!-- EVALUACIÓN 5 (NUEVA: PROPIEDADES DE LAS POTENCIAS) -->
+                  <button class="btn-start-quiz-5 w-full inline-flex items-center justify-between bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold text-xs px-4 py-3.5 rounded-xl transition shadow-md my-1">
+                    <span class="flex items-center gap-2">📝 Evaluación Interactiva N°5: Propiedades de las Potencias</span>
+                    <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px]">10 Ejercicios Dinámicos</span>
+                  </button>
+
                   <a href="https://drive.google.com/file/d/1q13YPnvCzgVbRn4L7EwcB3mulHffGLw2/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 8° Propiedad distributiva ↗</a>
                   <a href="https://drive.google.com/file/d/1oNlMqHIpKMHApwTUFO36Drq16yzaa9MQ/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 9° Productos notables - término común ↗</a>
                   <a href="https://drive.google.com/file/d/1fUcOUoEKEoL5kvmWBHu-YKerq75kRqPf/view?usp=sharing" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 10° Productos notables - cuadrado de binomio ↗</a>
@@ -650,16 +847,19 @@
       currentQuizType = type;
       if (type === 1) {
         document.getElementById('quiz-header-title').innerText = "Regla de los Signos para la Adición";
-        activeQuestions = generateQuiz1Set(); // TODAS LAS EVALUACIONES GENERAN PREGUNTAS ALEATORIAS
+        activeQuestions = generateQuiz1Set();
       } else if (type === 2) {
         document.getElementById('quiz-header-title').innerText = "Multiplicación y División de Enteros";
         activeQuestions = generateQuiz2Set();
       } else if (type === 3) {
         document.getElementById('quiz-header-title').innerText = "Identificación de Términos Semejantes";
         activeQuestions = generateQuiz3Set();
-      } else {
+      } else if (type === 4) {
         document.getElementById('quiz-header-title').innerText = "Reducción de Términos Semejantes";
         activeQuestions = generateQuiz4Set();
+      } else if (type === 5) {
+        document.getElementById('quiz-header-title').innerText = "Propiedades de las Potencias";
+        activeQuestions = generateQuiz5Set();
       }
 
       currentQIndex = 0;
@@ -894,6 +1094,7 @@
       if (e.target && e.target.closest('.btn-start-quiz-2')) { attemptCount = 1; startQuiz(2); }
       if (e.target && e.target.closest('.btn-start-quiz-3')) { attemptCount = 1; startQuiz(3); }
       if (e.target && e.target.closest('.btn-start-quiz-4')) { attemptCount = 1; startQuiz(4); }
+      if (e.target && e.target.closest('.btn-start-quiz-5')) { attemptCount = 1; startQuiz(5); }
 
       // Comprobar Respuesta Múltiple
       if (e.target && e.target.id === 'btn-quiz-check') { checkMultipleAnswer(); }
