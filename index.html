@@ -338,15 +338,15 @@
       return `$${sign}\\frac{${n}}{${d}}${varName}$`;
     }
 
-    // FORMATEADOR DE TÉRMINOS CON EXPONENTE 0 Y 1 (SIN MOSTRAR ELEVADO A 1)
+    // FORMATEADOR RIGUROSO: OMITIR EXPONENTE 1 Y EXPONENTE 0
     function formatVarPow(v, exp) {
       if (exp === 0) return "";
-      if (exp === 1) return v; // REGLA: No coloca exponente si es 1
+      if (exp === 1) return v;
       return `${v}^{${exp}}`;
     }
 
     // -------------------------------------------------------------
-    // GENERADORES DINÁMICOS Y ALEATORIOS PARA CADA EVALUACIÓN
+    // GENERADORES DINÁMICOS Y ALEATORIOS GARANTIZADOS MATEMÁTICAMENTE
     // -------------------------------------------------------------
 
     // EVALUACIÓN 1: ADICIÓN Y SUSTRACCIÓN DE ENTEROS
@@ -424,7 +424,7 @@
       return questions;
     }
 
-    // EVALUACIÓN 3: IDENTIFICACIÓN DE TÉRMINOS SEMEJANTES (SELECCIÓN MÚLTIPLE A-H)
+    // EVALUACIÓN 3: IDENTIFICACIÓN DE TÉRMINOS SEMEJANTES
     function generateQuiz3Set() {
       const baseLiterals = ["x^2y", "ab^3", "m^4n^2", "xyz^2", "w^3z^4", "cd^3e^2"];
       const questions = [];
@@ -546,21 +546,19 @@
       return questions;
     }
 
-    // EVALUACIÓN 5: PROPIEDADES DE LAS POTENCIAS (10 EJERCICIOS ALEATORIOS)
+    // EVALUACIÓN 5: PROPIEDADES DE LAS POTENCIAS (ESTRICTAMENTE VERIFICADO)
     function generateQuiz5Set() {
-      const singleVars = ['x', 'a', 'm'];
       const pairVars = [ ['x','y'], ['a','b'], ['m','n'] ];
       const denoms = [2, 3, 4, 5];
       const questions = [];
 
-      // EXACTAMENTE 1 EJERCICIO DEL LOTE ES MULTIPLICACIÓN DE ENTERO POR TÉRMINO ALGEBRAICO
       const intMultIndex = Math.floor(Math.random() * 10);
 
       for (let i = 0; i < 10; i++) {
         if (i === intMultIndex) {
-          // EJERCICIO ESPECIAL: ENTERO X TÉRMINO ALGEBRAICO
-          let k = (Math.floor(Math.random() * 8) + 2); // Entero 2 a 9
-          let coef = (Math.floor(Math.random() * 6) + 2); // Coeficiente 2 a 7
+          // 1. ENTERO POR TÉRMINO ALGEBRAICO
+          let k = (Math.floor(Math.random() * 8) + 2);
+          let coef = (Math.floor(Math.random() * 6) + 2);
           let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
           let e1 = Math.floor(Math.random() * 4) + 1;
           let e2 = Math.floor(Math.random() * 4) + 1;
@@ -581,21 +579,19 @@
             q: exprStr,
             options: shuffledOpts,
             correct: shuffledOpts.indexOf(resStr),
-            exp: `Multiplicamos el entero por el coeficiente del término: $${k} \\cdot ${coef} = ${prodCoef}$. Mantenemos la factor literal intacta.`
+            exp: `Multiplicamos el entero por el coeficiente: $${k} \\cdot ${coef} = ${prodCoef}$. La parte literal se mantiene intacta.`
           });
           continue;
         }
 
-        // TIPO DE EJERCICIO
         let rType = Math.random();
 
         if (rType < 0.25) {
-          // PROPIEDAD: EXPONENTE 0
+          // 2. EXPONENTE 0
           let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
           let mode = Math.random();
 
           if (mode < 0.5) {
-            // Todo elevado a 0
             let exprStr = `Aplica las propiedades de las potencias: $(${pair[0]}^3 ${pair[1]}^2)^0$`;
             let resStr = `$1$`;
             let shuffledOpts = ["$1$", "$0$", `$${pair[0]}^3 ${pair[1]}^2$`, `$${pair[0]} ${pair[1]}$`].sort(() => Math.random() - 0.5);
@@ -607,7 +603,6 @@
               exp: `Todo término no nulo elevado a la potencia $0$ es igual a $1$.`
             });
           } else {
-            // Solo una letra elevada a 0
             let e1 = Math.floor(Math.random() * 4) + 2;
             let exprStr = `Aplica las propiedades de las potencias: $${pair[0]}^{${e1}} ${pair[1]}^0$`;
             let resStr = `$${formatVarPow(pair[0], e1)}$`;
@@ -622,28 +617,27 @@
           }
 
         } else if (rType < 0.60) {
-          // PROPIEDAD: MULTIPLICACIÓN DE IGUAL BASE (APLICACIÓN EN TODO O SOLO UNA LETRA)
+          // 3. MULTIPLICACIÓN DE IGUAL BASE
           let useFrac = Math.random() < 0.35;
           let den = denoms[Math.floor(Math.random() * denoms.length)];
           let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
 
-          let eA1 = Math.floor(Math.random() * 4) + 1;
-          let eA2 = Math.floor(Math.random() * 4) + 1;
+          let eA1 = Math.floor(Math.random() * 3) + 1;
+          let eA2 = Math.floor(Math.random() * 3) + 1;
           let sumA = eA1 + eA2;
 
           let eB1 = Math.floor(Math.random() * 3) + 1;
-          let eB2 = Math.floor(Math.random() * 3) + 1;
-          let sumB = eB1 + eB2;
-
           let isSingleLetter = Math.random() < 0.5;
 
           if (isSingleLetter) {
-            // Solo una letra cambia
+            let term1 = `${formatVarPow(pair[0], eA1)}${formatVarPow(pair[1], eB1)}`;
+            let term2 = `${formatVarPow(pair[0], eA2)}`;
+            
             let exprStr = useFrac ? 
-              `Simplifica: $\\frac{1}{${den}} ${pair[0]}^{${eA1}} ${pair[1]}^{${eB1}} \\cdot ${pair[0]}^{${eA2}} ${pair[1]}^{${eB1}}$` :
-              `Simplifica: $${pair[0]}^{${eA1}} ${pair[1]}^{${eB1}} \\cdot ${pair[0]}^{${eA2}}$`;
+              `Simplifica: $\\frac{1}{${den}} ${term1} \\cdot ${term2}$` :
+              `Simplifica: $${term1} \\cdot ${term2}$`;
 
-            let varPart = `${formatVarPow(pair[0], sumA)}${isSingleLetter && !useFrac ? formatVarPow(pair[1], eB1) : formatVarPow(pair[1], sumB)}`;
+            let varPart = `${formatVarPow(pair[0], sumA)}${formatVarPow(pair[1], eB1)}`;
             let resStr = useFrac ? formatFrac(1, den, varPart) : `$${varPart}$`;
 
             let optsSet = new Set([resStr]);
@@ -667,17 +661,17 @@
             });
 
           } else {
-            // Todo el coeficiente literal cambia
+            let basePair = `${pair[0]} ${pair[1]}`;
             let exprStr = useFrac ? 
-              `Aplica la propiedad: $(\\frac{1}{${den}} ${pair[0]} ${pair[1]})^{${eA1}} \\cdot (${pair[0]} ${pair[1]})^{${eA2}}$` :
-              `Aplica la propiedad: $(${pair[0]} ${pair[1]})^{${eA1}} \\cdot (${pair[0]} ${pair[1]})^{${eA2}}$`;
+              `Aplica la propiedad: $\\frac{1}{${den}}(${basePair})^{${eA1}} \\cdot (${basePair})^{${eA2}}$` :
+              `Aplica la propiedad: $(${basePair})^{${eA1}} \\cdot (${basePair})^{${eA2}}$`;
 
-            let varPart = `(${pair[0]} ${pair[1]})^{${sumA}}`;
+            let varPart = `(${basePair})^{${sumA}}`;
             let resStr = useFrac ? formatFrac(1, den, varPart) : `$${varPart}$`;
 
             let optsSet = new Set([resStr]);
-            optsSet.add(useFrac ? formatFrac(1, den, `(${pair[0]} ${pair[1]})^{${eA1 * eA2}}`) : `$(${pair[0]} ${pair[1]})^{${eA1 * eA2}}$`);
-            optsSet.add(useFrac ? formatFrac(1, den, `(${pair[0]} ${pair[1]})^{${sumA + 1}}`) : `$(${pair[0]} ${pair[1]})^{${sumA + 1}}$`);
+            optsSet.add(useFrac ? formatFrac(1, den, `(${basePair})^{${eA1 * eA2}}`) : `$(${basePair})^{${eA1 * eA2}}$`);
+            optsSet.add(useFrac ? formatFrac(1, den, `(${basePair})^{${sumA + 1}}`) : `$(${basePair})^{${sumA + 1}}$`);
             optsSet.add(useFrac ? formatFrac(1, den, `${pair[0]}^{${sumA}} ${pair[1]}`) : `$${pair[0]}^{${sumA}} ${pair[1]}$`);
 
             let shuffledOpts = Array.from(optsSet).sort(() => Math.random() - 0.5);
@@ -687,27 +681,29 @@
               q: exprStr,
               options: shuffledOpts,
               correct: shuffledOpts.indexOf(resStr),
-              exp: `Al multiplicar potencias de igual base $( ${pair[0]} ${pair[1]} )$, conservamos la base y sumamos sus exponentes: $${eA1} + ${eA2} = ${sumA}$.`
+              exp: `Al multiplicar potencias de igual base $( ${basePair} )$, conservamos la base y sumamos sus exponentes: $${eA1} + ${eA2} = ${sumA}$.`
             });
           }
 
         } else {
-          // PROPIEDAD: DIVISIÓN DE IGUAL BASE
+          // 4. DIVISIÓN DE IGUAL BASE
           let useFrac = Math.random() < 0.35;
           let den = denoms[Math.floor(Math.random() * denoms.length)];
           let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
 
-          let diffA = Math.floor(Math.random() * 4) + 1; // Resultado del exponente
+          let diffA = Math.floor(Math.random() * 3) + 1;
           let eA2 = Math.floor(Math.random() * 3) + 1;
           let eA1 = eA2 + diffA;
 
-          let eB = Math.floor(Math.random() * 3) + 2;
+          let eB = Math.floor(Math.random() * 3) + 1;
+
+          let topTerm = `${formatVarPow(pair[0], eA1)}${formatVarPow(pair[1], eB)}`;
+          let botTerm = `${formatVarPow(pair[0], eA2)}${formatVarPow(pair[1], eB)}`;
 
           let exprStr = useFrac ?
-            `Simplifica: $\\frac{\\frac{1}{${den}} ${pair[0]}^{${eA1}} ${pair[1]}^{${eB}}}{${pair[0]}^{${eA2}} ${pair[1]}^{${eB}}}$` :
-            `Simplifica: $\\frac{${pair[0]}^{${eA1}} ${pair[1]}^{${eB}}}{${pair[0]}^{${eA2}} ${pair[1]}^{${eB}}}$`;
+            `Simplifica: $\\frac{\\frac{1}{${den}} ${topTerm}}{${botTerm}}$` :
+            `Simplifica: $\\frac{${topTerm}}{${botTerm}}$`;
 
-          // Recuerda regla: si diffA es 1, formatVarPow no muestra exponente 1
           let varPart = `${formatVarPow(pair[0], diffA)}`; 
           let resStr = useFrac ? formatFrac(1, den, varPart) : `$${varPart}$`;
 
@@ -723,7 +719,7 @@
             q: exprStr,
             options: shuffledOpts,
             correct: shuffledOpts.indexOf(resStr),
-            exp: `En la división de potencias de igual base, restamos exponentes: $${eA1} - ${eA2} = ${diffA}$. ${diffA === 1 ? 'Como el exponente es 1, no se escribe.' : ''} Las bases iguales $${pair[1]}^{${eB}}$ se simplifican.`
+            exp: `En la división de potencias de igual base, restamos exponentes: $${eA1} - ${eA2} = ${diffA}$. ${diffA === 1 ? 'Como el exponente es 1, no se escribe.' : ''}`
           });
         }
       }
@@ -784,7 +780,7 @@
 
                   <a href="https://drive.google.com/file/d/1mQqAjblOAozFnWsu5tTbAgOGLrBllceG/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 7° Propiedades de las potencias ↗</a>
 
-                  <!-- EVALUACIÓN 5 (NUEVA: PROPIEDADES DE LAS POTENCIAS) -->
+                  <!-- EVALUACIÓN 5 -->
                   <button class="btn-start-quiz-5 w-full inline-flex items-center justify-between bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold text-xs px-4 py-3.5 rounded-xl transition shadow-md my-1">
                     <span class="flex items-center gap-2">📝 Evaluación Interactiva N°5: Propiedades de las Potencias</span>
                     <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px]">10 Ejercicios Dinámicos</span>
