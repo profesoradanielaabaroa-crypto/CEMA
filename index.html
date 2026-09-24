@@ -338,10 +338,10 @@
       return `$${sign}\\frac{${n}}{${d}}${varName}$`;
     }
 
-    // FORMATEADOR RIGUROSO: OMITIR EXPONENTE 1 Y EXPONENTE 0
+    // FORMATEADOR ESTRICTO: JAMÁS IMPRIME EL EXPONENTE 1 NI 0
     function formatVarPow(v, exp) {
-      if (exp === 0) return "";
-      if (exp === 1) return v;
+      if (!exp || exp === 0) return "";
+      if (exp === 1) return v; // RETORNA SOLO LA LETRA (SIN ^1)
       return `${v}^{${exp}}`;
     }
 
@@ -546,7 +546,7 @@
       return questions;
     }
 
-    // EVALUACIÓN 5: PROPIEDADES DE LAS POTENCIAS (ESTRICTAMENTE VERIFICADO)
+    // EVALUACIÓN 5: PROPIEDADES DE LAS POTENCIAS (SIN NINGÚN EXPONENTE 1)
     function generateQuiz5Set() {
       const pairVars = [ ['x','y'], ['a','b'], ['m','n'] ];
       const denoms = [2, 3, 4, 5];
@@ -560,8 +560,8 @@
           let k = (Math.floor(Math.random() * 8) + 2);
           let coef = (Math.floor(Math.random() * 6) + 2);
           let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
-          let e1 = Math.floor(Math.random() * 4) + 1;
-          let e2 = Math.floor(Math.random() * 4) + 1;
+          let e1 = Math.floor(Math.random() * 3) + 2; // Forzamos exponentes >= 2 para evitar confusión
+          let e2 = Math.floor(Math.random() * 3) + 2;
 
           let prodCoef = k * coef;
           let exprStr = `Simplifica: $${k} \\cdot (${coef}${formatVarPow(pair[0], e1)}${formatVarPow(pair[1], e2)})$`;
@@ -603,7 +603,7 @@
               exp: `Todo término no nulo elevado a la potencia $0$ es igual a $1$.`
             });
           } else {
-            let e1 = Math.floor(Math.random() * 4) + 2;
+            let e1 = Math.floor(Math.random() * 3) + 2;
             let exprStr = `Aplica las propiedades de las potencias: $${pair[0]}^{${e1}} ${pair[1]}^0$`;
             let resStr = `$${formatVarPow(pair[0], e1)}$`;
             let shuffledOpts = [`$${formatVarPow(pair[0], e1)}$`, `$1$`, `$0$`, `$${formatVarPow(pair[0], e1)}${pair[1]}$`].sort(() => Math.random() - 0.5);
@@ -622,11 +622,11 @@
           let den = denoms[Math.floor(Math.random() * denoms.length)];
           let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
 
-          let eA1 = Math.floor(Math.random() * 3) + 1;
-          let eA2 = Math.floor(Math.random() * 3) + 1;
+          let eA1 = Math.floor(Math.random() * 3) + 2; // Exponentes mayores o iguales a 2
+          let eA2 = Math.floor(Math.random() * 3) + 2;
           let sumA = eA1 + eA2;
 
-          let eB1 = Math.floor(Math.random() * 3) + 1;
+          let eB1 = Math.floor(Math.random() * 3) + 2;
           let isSingleLetter = Math.random() < 0.5;
 
           if (isSingleLetter) {
@@ -691,11 +691,11 @@
           let den = denoms[Math.floor(Math.random() * denoms.length)];
           let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
 
-          let diffA = Math.floor(Math.random() * 3) + 1;
-          let eA2 = Math.floor(Math.random() * 3) + 1;
+          let diffA = Math.floor(Math.random() * 3) + 2; // Diferencia >= 2 para asegurar que el exponente resultante no sea 1
+          let eA2 = Math.floor(Math.random() * 3) + 2;
           let eA1 = eA2 + diffA;
 
-          let eB = Math.floor(Math.random() * 3) + 1;
+          let eB = Math.floor(Math.random() * 3) + 2;
 
           let topTerm = `${formatVarPow(pair[0], eA1)}${formatVarPow(pair[1], eB)}`;
           let botTerm = `${formatVarPow(pair[0], eA2)}${formatVarPow(pair[1], eB)}`;
@@ -719,7 +719,7 @@
             q: exprStr,
             options: shuffledOpts,
             correct: shuffledOpts.indexOf(resStr),
-            exp: `En la división de potencias de igual base, restamos exponentes: $${eA1} - ${eA2} = ${diffA}$. ${diffA === 1 ? 'Como el exponente es 1, no se escribe.' : ''}`
+            exp: `En la división de potencias de igual base, restamos exponentes: $${eA1} - ${eA2} = ${diffA}$.`
           });
         }
       }
