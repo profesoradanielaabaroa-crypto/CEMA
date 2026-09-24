@@ -338,10 +338,9 @@
       return `$${sign}\\frac{${n}}{${d}}${varName}$`;
     }
 
-    // FORMATEADOR ESTRICTO: JAMÁS IMPRIME EL EXPONENTE 1 NI 0
     function formatVarPow(v, exp) {
       if (!exp || exp === 0) return "";
-      if (exp === 1) return v; // RETORNA SOLO LA LETRA (SIN ^1)
+      if (exp === 1) return v;
       return `${v}^{${exp}}`;
     }
 
@@ -546,183 +545,218 @@
       return questions;
     }
 
-    // EVALUACIÓN 5: PROPIEDADES DE LAS POTENCIAS (SIN NINGÚN EXPONENTE 1)
+    // EVALUACIÓN 5: PROPIEDADES DE LAS POTENCIAS Y MODELAMIENTO EXPONENCIAL (ENFOQUE SIMCE)
     function generateQuiz5Set() {
-      const pairVars = [ ['x','y'], ['a','b'], ['m','n'] ];
-      const denoms = [2, 3, 4, 5];
       const questions = [];
 
-      const intMultIndex = Math.floor(Math.random() * 10);
+      // 1. División de potencias con exponentes enteros negativos
+      (() => {
+        let n1 = Math.floor(Math.random() * 5) + 3; 
+        let n2 = -(Math.floor(Math.random() * 5) + 2); 
+        let diff = n1 - n2; 
+        let expr = `¿Cuál de las siguientes opciones equivale a $\\left(\\frac{5}{3}\\right)^{${n1}} : \\left(\\frac{5}{3}\\right)^{${n2}}$?`;
+        
+        let correctOpt = `$\\left(\\frac{5}{3}\\right)^{${diff}}$`;
+        let optsSet = new Set([
+          correctOpt,
+          `$\\left(\\frac{5}{3}\\right)^{${n1 - Math.abs(n2)}}$`,
+          `$\\left(\\frac{5}{3}\\right)^{${n1 * n2}}$`,
+          `$1$`
+        ]);
+        let shuffledOpts = Array.from(optsSet).sort(() => Math.random() - 0.5);
 
-      for (let i = 0; i < 10; i++) {
-        if (i === intMultIndex) {
-          // 1. ENTERO POR TÉRMINO ALGEBRAICO
-          let k = (Math.floor(Math.random() * 8) + 2);
-          let coef = (Math.floor(Math.random() * 6) + 2);
-          let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
-          let e1 = Math.floor(Math.random() * 3) + 2; // Forzamos exponentes >= 2 para evitar confusión
-          let e2 = Math.floor(Math.random() * 3) + 2;
+        questions.push({
+          type: 'single',
+          q: expr,
+          options: shuffledOpts,
+          correct: shuffledOpts.indexOf(correctOpt),
+          exp: `Restamos exponentes: $${n1} - (${n2}) = ${n1} + ${Math.abs(n2)} = ${diff}$. El resultado es $\\left(\\frac{5}{3}\\right)^{${diff}}$.`
+        });
+      })();
 
-          let prodCoef = k * coef;
-          let exprStr = `Simplifica: $${k} \\cdot (${coef}${formatVarPow(pair[0], e1)}${formatVarPow(pair[1], e2)})$`;
-          let resStr = `$${prodCoef}${formatVarPow(pair[0], e1)}${formatVarPow(pair[1], e2)}$`;
+      // 2. Generalización algebraica de la multiplicación
+      (() => {
+        let base = Math.floor(Math.random() * 6) + 3;
+        let expr = `En la igualdad $${base}^a \\cdot ${base}^b = c$, si $c = ${base}^{\\text{tarjeta}}$, ¿qué expresión va en la tarjeta?`;
+        let correctOpt = `$a + b$`;
+        let shuffledOpts = [`$a \\cdot b$`, `$\\frac{1}{a+b}$`, `$a + b$`, `$${base}a + ${base}b$`].sort(() => Math.random() - 0.5);
 
-          let optsSet = new Set([resStr]);
-          optsSet.add(`$${k + coef}${formatVarPow(pair[0], e1)}${formatVarPow(pair[1], e2)}$`);
-          optsSet.add(`$${prodCoef}${formatVarPow(pair[0], e1 + 1)}${formatVarPow(pair[1], e2)}$`);
-          optsSet.add(`$${prodCoef}${formatVarPow(pair[0], e1)}${formatVarPow(pair[1], e2 + 1)}$`);
+        questions.push({
+          type: 'single',
+          q: expr,
+          options: shuffledOpts,
+          correct: shuffledOpts.indexOf(correctOpt),
+          exp: `Al multiplicar potencias de igual base, se conserva la base y se suman los exponentes: $${base}^a \\cdot ${base}^b = ${base}^{a+b}$.`
+        });
+      })();
 
-          let shuffledOpts = Array.from(optsSet).sort(() => Math.random() - 0.5);
+      // 3. Expresión combinada (Multiplicación y División simultáneas)
+      (() => {
+        let e1 = -(Math.floor(Math.random() * 6) + 10); 
+        let e2 = Math.floor(Math.random() * 4) + 2;    
+        let e3 = Math.floor(Math.random() * 4) + 3;    
+        
+        let numExp = e1 + e2;
+        let totalExp = numExp - e3;
 
-          questions.push({
-            type: 'single',
-            q: exprStr,
-            options: shuffledOpts,
-            correct: shuffledOpts.indexOf(resStr),
-            exp: `Multiplicamos el entero por el coeficiente: $${k} \\cdot ${coef} = ${prodCoef}$. La parte literal se mantiene intacta.`
-          });
-          continue;
-        }
+        let expr = `¿Cuál opción es equivalente a $\\frac{\\left(\\frac{2}{5}\\right)^{${e1}} \\cdot \\left(\\frac{2}{5}\\right)^{${e2}}}{\\left(\\frac{2}{5}\\right)^{${e3}}}$?`;
+        let correctOpt = `$\\left(\\frac{2}{5}\\right)^{${totalExp}}$`;
+        
+        let optsSet = new Set([
+          correctOpt,
+          `$\\left(\\frac{2}{5}\\right)^{${numExp + e3}}$`,
+          `$\\left(\\frac{2}{5}\\right)^{${e1 - e2 - e3}}$`,
+          `$\\left(\\frac{2}{5}\\right)^{${e1 + e2 + e3}}$`
+        ]);
+        let shuffledOpts = Array.from(optsSet).sort(() => Math.random() - 0.5);
 
-        let rType = Math.random();
+        questions.push({
+          type: 'single',
+          q: expr,
+          options: shuffledOpts,
+          correct: shuffledOpts.indexOf(correctOpt),
+          exp: `Numerador: $${e1} + ${e2} = ${numExp}$. Operación total: $${numExp} - (${e3}) = ${totalExp}$.`
+        });
+      })();
 
-        if (rType < 0.25) {
-          // 2. EXPONENTE 0
-          let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
-          let mode = Math.random();
+      // 4. Multiplicación de bases fraccionarias con exponente negativo común
+      (() => {
+        let exp = -(Math.floor(Math.random() * 5) + 2); 
+        let expr = `¿Cuál de estas potencias equivale a $\\left(\\frac{2}{3}\\right)^{${exp}} \\cdot \\left(\\frac{5}{4}\\right)^{${exp}}$?`;
+        
+        let correctOpt = `$\\left(\\frac{10}{12}\\right)^{${exp}}$`;
+        let shuffledOpts = [
+          `$\\left(\\frac{10}{12}\\right)^{${exp * 2}}$`,
+          correctOpt,
+          `$\\left(\\frac{23}{12}\\right)^{${exp}}$`,
+          `$\\left(\\frac{23}{12}\\right)^{${Math.abs(exp) * 5}}$`
+        ].sort(() => Math.random() - 0.5);
 
-          if (mode < 0.5) {
-            let exprStr = `Aplica las propiedades de las potencias: $(${pair[0]}^3 ${pair[1]}^2)^0$`;
-            let resStr = `$1$`;
-            let shuffledOpts = ["$1$", "$0$", `$${pair[0]}^3 ${pair[1]}^2$`, `$${pair[0]} ${pair[1]}$`].sort(() => Math.random() - 0.5);
-            questions.push({
-              type: 'single',
-              q: exprStr,
-              options: shuffledOpts,
-              correct: shuffledOpts.indexOf(resStr),
-              exp: `Todo término no nulo elevado a la potencia $0$ es igual a $1$.`
-            });
-          } else {
-            let e1 = Math.floor(Math.random() * 3) + 2;
-            let exprStr = `Aplica las propiedades de las potencias: $${pair[0]}^{${e1}} ${pair[1]}^0$`;
-            let resStr = `$${formatVarPow(pair[0], e1)}$`;
-            let shuffledOpts = [`$${formatVarPow(pair[0], e1)}$`, `$1$`, `$0$`, `$${formatVarPow(pair[0], e1)}${pair[1]}$`].sort(() => Math.random() - 0.5);
-            questions.push({
-              type: 'single',
-              q: exprStr,
-              options: shuffledOpts,
-              correct: shuffledOpts.indexOf(resStr),
-              exp: `Como $${pair[1]}^0 = 1$, la expresión equivale a $${formatVarPow(pair[0], e1)} \\cdot 1 = ${formatVarPow(pair[0], e1)}$.`
-            });
-          }
+        questions.push({
+          type: 'single',
+          q: expr,
+          options: shuffledOpts,
+          correct: shuffledOpts.indexOf(correctOpt),
+          exp: `Multiplicamos las bases y conservamos el exponente común: $\\left(\\frac{2 \\cdot 5}{3 \\cdot 4}\\right)^{${exp}} = \\left(\\frac{10}{12}\\right)^{${exp}}$.`
+        });
+      })();
 
-        } else if (rType < 0.60) {
-          // 3. MULTIPLICACIÓN DE IGUAL BASE
-          let useFrac = Math.random() < 0.35;
-          let den = denoms[Math.floor(Math.random() * denoms.length)];
-          let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
+      // 5. Exponente negativo con base entera simple
+      (() => {
+        let base = [2, 3, 4, 5][Math.floor(Math.random() * 4)];
+        let exp = -2;
+        let val = Math.pow(base, 2);
 
-          let eA1 = Math.floor(Math.random() * 3) + 2; // Exponentes mayores o iguales a 2
-          let eA2 = Math.floor(Math.random() * 3) + 2;
-          let sumA = eA1 + eA2;
+        let expr = `¿Cuál es el valor de $${base}^{${exp}}$?`;
+        let correctOpt = `$\\frac{1}{${val}}$`;
+        let shuffledOpts = [`$${val}$`, `$\\frac{1}{${val}}$`, `$-${base * 2}$`, `$-${val}$`].sort(() => Math.random() - 0.5);
 
-          let eB1 = Math.floor(Math.random() * 3) + 2;
-          let isSingleLetter = Math.random() < 0.5;
+        questions.push({
+          type: 'single',
+          q: expr,
+          options: shuffledOpts,
+          correct: shuffledOpts.indexOf(correctOpt),
+          exp: `Aplicamos el recíproco de la base: $${base}^{-2} = \\left(\\frac{1}{${base}}\\right)^2 = \\frac{1}{${val}}$.`
+        });
+      })();
 
-          if (isSingleLetter) {
-            let term1 = `${formatVarPow(pair[0], eA1)}${formatVarPow(pair[1], eB1)}`;
-            let term2 = `${formatVarPow(pair[0], eA2)}`;
-            
-            let exprStr = useFrac ? 
-              `Simplifica: $\\frac{1}{${den}} ${term1} \\cdot ${term2}$` :
-              `Simplifica: $${term1} \\cdot ${term2}$`;
+      // 6. Exponente negativo con base fraccionaria y signo negativo
+      (() => {
+        let den = [2, 3, 4, 5][Math.floor(Math.random() * 4)];
+        let res = den * den;
 
-            let varPart = `${formatVarPow(pair[0], sumA)}${formatVarPow(pair[1], eB1)}`;
-            let resStr = useFrac ? formatFrac(1, den, varPart) : `$${varPart}$`;
+        let expr = `¿Cuánto es el valor de $\\left(-\\frac{1}{${den}}\\right)^{-2}$?`;
+        let correctOpt = `$${res}$`;
+        let shuffledOpts = [`$-${res}$`, `$${res}$`, `$-\\frac{1}{${res}}$`, `$\\frac{1}{${res}}$`].sort(() => Math.random() - 0.5);
 
-            let optsSet = new Set([resStr]);
-            let varWrong1 = `${formatVarPow(pair[0], eA1 * eA2)}${formatVarPow(pair[1], eB1)}`;
-            optsSet.add(useFrac ? formatFrac(1, den, varWrong1) : `$${varWrong1}$`);
+        questions.push({
+          type: 'single',
+          q: expr,
+          options: shuffledOpts,
+          correct: shuffledOpts.indexOf(correctOpt),
+          exp: `Invertimos la base: $\\left(-\\frac{${den}}{1}\\right)^2 = (-${den})^2 = ${res}$. Base negativa elevada a exponente par da resultado positivo.`
+        });
+      })();
 
-            let varWrong2 = `${formatVarPow(pair[0], sumA + 1)}${formatVarPow(pair[1], eB1)}`;
-            optsSet.add(useFrac ? formatFrac(1, den, varWrong2) : `$${varWrong2}$`);
+      // 7. Operatoria combinada con potencia de potencia y jerarquía
+      (() => {
+        let expr = `Resuelve: $(2^2)^3 + 4^3 : 2^3$`;
+        let correctOpt = `$72$`;
+        let shuffledOpts = [`$64$`, `$72$`, `$80$`, `$128$`].sort(() => Math.random() - 0.5);
 
-            let varWrong3 = `${formatVarPow(pair[0], sumA)}${formatVarPow(pair[1], eB1 + 1)}`;
-            optsSet.add(useFrac ? formatFrac(1, den, varWrong3) : `$${varWrong3}$`);
+        questions.push({
+          type: 'single',
+          q: expr,
+          options: shuffledOpts,
+          correct: shuffledOpts.indexOf(correctOpt),
+          exp: `1) $(2^2)^3 = 2^6 = 64$. 2) $4^3 : 2^3 = (4:2)^3 = 2^3 = 8$. 3) Suma: $64 + 8 = 72$.`
+        });
+      })();
 
-            let shuffledOpts = Array.from(optsSet).sort(() => Math.random() - 0.5);
+      // 8. Signo de una potencia con base negativa
+      (() => {
+        let base = [3, 4, 5, 6][Math.floor(Math.random() * 4)];
+        let res = base * base;
 
-            questions.push({
-              type: 'single',
-              q: exprStr,
-              options: shuffledOpts,
-              correct: shuffledOpts.indexOf(resStr),
-              exp: `Multiplicación de igual base: conservamos la base $${pair[0]}$ y sumamos los exponentes $${eA1} + ${eA2} = ${sumA}$.`
-            });
+        let expr = `¿Cuál es el valor de $(-${base})^2$?`;
+        let correctOpt = `$${res}$`;
+        let shuffledOpts = [`$-${res}$`, `$-${base * 2}$`, `$${base * 2}$`, `$${res}$`].sort(() => Math.random() - 0.5);
 
-          } else {
-            let basePair = `${pair[0]} ${pair[1]}`;
-            let exprStr = useFrac ? 
-              `Aplica la propiedad: $\\frac{1}{${den}}(${basePair})^{${eA1}} \\cdot (${basePair})^{${eA2}}$` :
-              `Aplica la propiedad: $(${basePair})^{${eA1}} \\cdot (${basePair})^{${eA2}}$`;
+        questions.push({
+          type: 'single',
+          q: expr,
+          options: shuffledOpts,
+          correct: shuffledOpts.indexOf(correctOpt),
+          exp: `Base negativa elevada a un exponente par da resultado positivo: $(-${base}) \\cdot (-${base}) = ${res}$.`
+        });
+      })();
 
-            let varPart = `(${basePair})^{${sumA}}`;
-            let resStr = useFrac ? formatFrac(1, den, varPart) : `$${varPart}$`;
+      // 9. Modelamiento: Rebajas o descuentos porcentuales sucesivos
+      (() => {
+        let monto = 50000;
+        let semanas = 4;
+        let expr = `Un producto de $\\$${monto.toLocaleString('es-CL')}$ se rebaja un $10\\%$ cada semana sobre el precio ya rebajado. ¿Qué expresión representa el precio tras la cuarta rebaja?`;
+        
+        let correctOpt = `$\\left(1 - \\frac{1}{10}\\right)^4 \\cdot ${monto}$`;
+        let shuffledOpts = [
+          `$\\left[1 - \\left(\\frac{1}{10}\\right)^4\\right] \\cdot ${monto}$`,
+          `$\\left[\\left(1 - \\frac{1}{10}\\right) \\cdot ${monto}\\right]^4$`,
+          correctOpt,
+          `$\\left(1 - \\frac{1}{10}\\right) \\cdot ${monto}$`
+        ].sort(() => Math.random() - 0.5);
 
-            let optsSet = new Set([resStr]);
-            optsSet.add(useFrac ? formatFrac(1, den, `(${basePair})^{${eA1 * eA2}}`) : `$(${basePair})^{${eA1 * eA2}}$`);
-            optsSet.add(useFrac ? formatFrac(1, den, `(${basePair})^{${sumA + 1}}`) : `$(${basePair})^{${sumA + 1}}$`);
-            optsSet.add(useFrac ? formatFrac(1, den, `${pair[0]}^{${sumA}} ${pair[1]}`) : `$${pair[0]}^{${sumA}} ${pair[1]}$`);
+        questions.push({
+          type: 'single',
+          q: expr,
+          options: shuffledOpts,
+          correct: shuffledOpts.indexOf(correctOpt),
+          exp: `El factor de retención es $\\left(1 - \\frac{1}{10}\\right) = 0,9$. Al aplicarse ${semanas} veces consecutivas se expresa como $${monto} \\cdot (0,9)^4$.`
+        });
+      })();
 
-            let shuffledOpts = Array.from(optsSet).sort(() => Math.random() - 0.5);
+      // 10. Modelamiento: Crecimiento de bacterias
+      (() => {
+        let poblacion = 30000;
+        let horas = 8;
+        let periodos = horas * 2;
 
-            questions.push({
-              type: 'single',
-              q: exprStr,
-              options: shuffledOpts,
-              correct: shuffledOpts.indexOf(resStr),
-              exp: `Al multiplicar potencias de igual base $( ${basePair} )$, conservamos la base y sumamos sus exponentes: $${eA1} + ${eA2} = ${sumA}$.`
-            });
-          }
+        let expr = `Una bacteria se duplica cada $30$ minutos. Si al inicio existen $30.000$ bacterias, ¿cuántas habrá al cabo de $8$ horas?`;
+        let correctOpt = `$2^{${periodos}} \\cdot 30.000$`;
+        let shuffledOpts = [
+          `$(2 \\cdot 30.000)^{${periodos}}$`,
+          correctOpt,
+          `$2^{${horas}} \\cdot 30.000$`,
+          `$(2 \\cdot 30.000)^{${horas}}$`
+        ].sort(() => Math.random() - 0.5);
 
-        } else {
-          // 4. DIVISIÓN DE IGUAL BASE
-          let useFrac = Math.random() < 0.35;
-          let den = denoms[Math.floor(Math.random() * denoms.length)];
-          let pair = pairVars[Math.floor(Math.random() * pairVars.length)];
-
-          let diffA = Math.floor(Math.random() * 3) + 2; // Diferencia >= 2 para asegurar que el exponente resultante no sea 1
-          let eA2 = Math.floor(Math.random() * 3) + 2;
-          let eA1 = eA2 + diffA;
-
-          let eB = Math.floor(Math.random() * 3) + 2;
-
-          let topTerm = `${formatVarPow(pair[0], eA1)}${formatVarPow(pair[1], eB)}`;
-          let botTerm = `${formatVarPow(pair[0], eA2)}${formatVarPow(pair[1], eB)}`;
-
-          let exprStr = useFrac ?
-            `Simplifica: $\\frac{\\frac{1}{${den}} ${topTerm}}{${botTerm}}$` :
-            `Simplifica: $\\frac{${topTerm}}{${botTerm}}$`;
-
-          let varPart = `${formatVarPow(pair[0], diffA)}`; 
-          let resStr = useFrac ? formatFrac(1, den, varPart) : `$${varPart}$`;
-
-          let optsSet = new Set([resStr]);
-          optsSet.add(useFrac ? formatFrac(1, den, formatVarPow(pair[0], eA1 + eA2)) : `$${formatVarPow(pair[0], eA1 + eA2)}$`);
-          optsSet.add(useFrac ? formatFrac(1, den, `${formatVarPow(pair[0], diffA)}${pair[1]}`) : `$${formatVarPow(pair[0], diffA)}${pair[1]}$`);
-          optsSet.add(useFrac ? formatFrac(1, den, formatVarPow(pair[0], diffA + 1)) : `$${formatVarPow(pair[0], diffA + 1)}$`);
-
-          let shuffledOpts = Array.from(optsSet).sort(() => Math.random() - 0.5);
-
-          questions.push({
-            type: 'single',
-            q: exprStr,
-            options: shuffledOpts,
-            correct: shuffledOpts.indexOf(resStr),
-            exp: `En la división de potencias de igual base, restamos exponentes: $${eA1} - ${eA2} = ${diffA}$.`
-          });
-        }
-      }
+        questions.push({
+          type: 'single',
+          q: expr,
+          options: shuffledOpts,
+          correct: shuffledOpts.indexOf(correctOpt),
+          exp: `$8$ horas corresponden a $16$ periodos de $30$ minutos. Por lo tanto, la población se multiplica por $2^{16}$, resultando en $2^{16} \\cdot 30.000$.`
+        });
+      })();
 
       return questions;
     }
