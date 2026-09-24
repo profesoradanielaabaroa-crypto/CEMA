@@ -6,7 +6,7 @@
   <title>Plataforma CEMA - Matemática</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- KATEX: PARA RENDERIZAR FRACCIONES VERTICALES -->
+  <!-- KATEX: PARA RENDERIZAR FRACCIONES VERTICALES Y SÍMBOLOS MATEMÁTICOS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
@@ -316,59 +316,230 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // BANCOS DE PREGUNTAS (ESCAPADO DOBLE \\\\ CUIDADOSO)
-    const quiz1Set1 = [
-      { type: 'single', q: "Calcula: $-7 + (-4)$", options: ["$11$", "$-11$", "$-3$", "$3$"], correct: 1, exp: "Al sumar dos números negativos, se suman sus valores absolutos ($7 + 4 = 11$) y se conserva el signo negativo: $-11$." },
-      { type: 'single', q: "Calcula: $12 + (-5)$", options: ["$17$", "$-7$", "$7$", "$-17$"], correct: 2, exp: "Al sumar números con distinto signo, se restan sus valores absolutos ($12 - 5 = 7$) y se deja el signo del mayor: $7$." },
-      { type: 'single', q: "Calcula: $-15 + 8$", options: ["$-7$", "$7$", "$-23$", "$23$"], correct: 0, exp: "Tienen distinto signo, restamos $15 - 8 = 7$. Como $-15$ es mayor en valor absoluto, queda $-7$." },
-      { type: 'single', q: "Calcula: $9 - 14$", options: ["$5$", "$-23$", "$-5$", "$23$"], correct: 2, exp: "Restar $14$ equivale a $9 + (-14)$. Restamos $14 - 9 = 5$ y conservamos el signo negativo de $-14$: $-5$." },
-      { type: 'single', q: "Calcula: $-6 - (-10)$", options: ["$-16$", "$4$", "$-4$", "$16$"], correct: 1, exp: "Restar un negativo equivale a sumar su opuesto: $-6 + 10$. Restamos $10 - 6 = 4$." },
-      { type: 'single', q: "Calcula: $-18 + (-2)$", options: ["$-16$", "$16$", "$-20$", "$20$"], correct: 2, exp: "Ambos son negativos, sumamos $18 + 2 = 20$ y mantenemos el signo negativo: $-20$." },
-      { type: 'single', q: "Calcula: $4 - (-7)$", options: ["$-3$", "$11$", "$-11$", "$3$"], correct: 1, exp: "Restar $(-7)$ se convierte en sumar $+7$: $4 + 7 = 11$." },
-      { type: 'single', q: "Calcula: $-20 + 20$", options: ["$0$", "$-40$", "$40$", "$1$"], correct: 0, exp: "La suma de dos números opuestos siempre da como resultado $0$." },
-      { type: 'single', q: "Calcula: $-13 - 7$", options: ["$-6$", "$6$", "$-20$", "$20$"], correct: 2, exp: "$-13 - 7$ equivale a $-13 + (-7)$. Sumamos los valores $13 + 7 = 20$ con signo negativo: $-20$." },
-      { type: 'single', q: "Calcula: $3 + (-11)$", options: ["$-8$", "$8$", "$-14$", "$14$"], correct: 0, exp: "Restamos $11 - 3 = 8$ y conservamos el signo de $-11$: $-8$." }
-    ];
+    // FUNCIONES MATEMÁTICAS Y FORMATO PARA GENERACIÓN DINÁMICA DE EJERCICIOS
+    function mcd(a, b) {
+      a = Math.abs(a); b = Math.abs(b);
+      while (b) { let t = b; b = a % b; a = t; }
+      return a;
+    }
 
-    const quiz2Set1 = [
-      { type: 'single', q: "Calcula: $-6 \\cdot (-5)$", options: ["$-30$", "$30$", "$-11$", "$11$"], correct: 1, exp: "Al multiplicar dos números negativos, el resultado es positivo: $(-6) \\cdot (-5) = 30$." },
-      { type: 'single', q: "Calcula: $8 \\cdot (-4)$", options: ["$32$", "$-12$", "$-32$", "$4$"], correct: 2, exp: "Positivo por negativo da como resultado negativo: $8 \\cdot (-4) = -32$." },
-      { type: 'single', q: "Calcula: $-36 : (-9)$", options: ["$-4$", "$4$", "$-27$", "$27$"], correct: 1, exp: "Al dividir dos números con el mismo signo negativo, el resultado es positivo: $(-36) : (-9) = 4$." },
-      { type: 'single', q: "Calcula: $-48 : 6$", options: ["$-8$", "$8$", "$-42$", "$42$"], correct: 0, exp: "Negativo dividido entre positivo da como resultado negativo: (-48) : 6 = -8." },
-      { type: 'single', q: "Calcula: $-7 \\cdot 3$", options: ["$21$", "$-21$", "$-10$", "$10$"], correct: 1, exp: "Negativo por positivo resulta negativo: $(-7) \\cdot 3 = -21$." },
-      { type: 'single', q: "Calcula: $-15 : (-3)$", options: ["$-5$", "$5$", "$-12$", "$12$"], correct: 1, exp: "Negativo dividido entre negativo da positivo: $(-15) : (-3) = 5$." },
-      { type: 'single', q: "Calcula: $9 \\cdot (-2)$", options: ["$-18$", "$18$", "$-7$", "$7$"], correct: 0, exp: "Positivo por negativo resulta negativo: $9 \\cdot (-2) = -18$." },
-      { type: 'single', q: "Calcula: $50 : (-10)$", options: ["$5$", "$-5$", "$-40$", "$40$"], correct: 1, exp: "Positivo dividido entre negativo resulta negativo: $50 : (-10) = -5$." },
-      { type: 'single', q: "Calcula: $-4 \\cdot (-8)$", options: ["$-32$", "$32$", "$-12$", "$12$"], correct: 1, exp: "Ambos números son negativos, por lo que su producto es positivo: $(-4) \\cdot (-8) = 32$." },
-      { type: 'single', q: "Calcula: $-63 : 7$", options: ["$9$", "$-9$", "$-56$", "$56$"], correct: 1, exp: "Distinto signo en la división da como resultado negativo: $(-63) : 7 = -9$." }
-    ];
+    function formatFrac(num, den, varName = "") {
+      if (num === 0) return "$0$";
+      let sign = (num * den < 0) ? "-" : "";
+      let n = Math.abs(num);
+      let d = Math.abs(den);
+      let g = mcd(n, d);
+      n /= g; d /= g;
 
-    const quiz3Set1 = [
-      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes al número: $-7$", options: ["$15$", "$-7x$", "$\\frac{3}{4}$", "$-2,5$", "$7y$", "$0$", "$-7x^0$", "$a$"], correct: [0, 2, 3, 5, 6], exp: "Todos los números constantes (sin variable o con exponente 0) son semejantes entre sí." },
-      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: $4x^2y$", options: ["$-x^2y$", "$4xy^2$", "$9yx^2$", "$-4x^2$", "$\\frac{1}{3}x^2y$", "$-4$", "$2yx^2$", "$x^2y^2$"], correct: [0, 2, 4, 6], exp: "La factor literal requerida es $x^2y$ (o $yx^2$)." },
-      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a la fracción: $\\frac{2}{5}$", options: ["$-18$", "$\\frac{2}{5}a$", "$0,75$", "$-\\frac{1}{2}$", "$100$", "$\\frac{5}{2}x$", "$-0,3$", "$x$"], correct: [0, 2, 3, 4, 6], exp: "$\\frac{2}{5}$ es una constante, por lo que cualquier entero, fracción o decimal puro es semejante." },
-      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: $-3ab^3$", options: ["$8ab^3$", "$-3a^3b$", "$b^3a$", "$-ab^3$", "$3ab$", "$-5b^3a$", "$a^3b^3$", "$-3$"], correct: [0, 2, 3, 5], exp: "La parte literal debe contener $a$ con exponente 1 y $b$ con exponente 3." },
-      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: $6m^4n^2$", options: ["$-m^4n^2$", "$6m^2n^4$", "$15n^2m^4$", "$\\frac{2}{3}m^4n^2$", "$-6mn$", "$-8m^4n^2$", "$6$", "$m^2n^2$"], correct: [0, 2, 3, 5], exp: "Deben conservar $m^4$ y $n^2$." },
-      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: $-a^2b^2$", options: ["$5a^2b^2$", "$-2ab$", "$b^2a^2$", "$-a^2b^3$", "$-\\frac{7}{2}a^2b^2$", "$a^2+b^2$", "$-10b^2a^2$", "$-1$"], correct: [0, 2, 4, 6], exp: "Términos con factor literal $a^2b^2$." },
-      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes al número decimal: $-1,5$", options: ["$3$", "$-1,5x$", "$\\frac{8}{3}$", "$-99$", "$1,5y^2$", "$0,001$", "$-1,5$", "$\\frac{a}{b}$"], correct: [0, 2, 3, 5, 6], exp: "Todos los números racionales puros (constantes) son semejantes." },
-      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: $-xyz^2$", options: ["$4xyz^2$", "$-z^2xy$", "$-x^2yz$", "$\\frac{1}{2}z^2yx$", "$-xyz$", "$10yz^2x$", "$z^2$", "$-2$"], correct: [0, 1, 3, 5], exp: "Términos con $x$, $y$ y $z^2$." },
-      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: $9w^3z^4$", options: ["$-2w^3z^4$", "$9z^4w^3$", "$w^4z^3$", "$11w^3z^4$", "$-w^3z^4$", "$9$", "$z^4w^3$", "$wz$"], correct: [0, 1, 3, 4, 6], exp: "Exponentes requeridos: $w^3$ y $z^4$." },
-      { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: $-2cd^3e^2$", options: ["$cd^3e^2$", "$-2c^3de^2$", "$5e^2d^3c$", "$-d^3e^2c$", "$\\frac{1}{4}ce^2d^3$", "$-2$", "$c^2d^3e^2$", "$-cd^3e^2$"], correct: [0, 2, 3, 4, 7], exp: "Factores literales: $c$, $d^3$ y $e^2$." }
-    ];
+      if (d === 1) {
+        if (n === 1 && varName !== "") return `$${sign}${varName}$`;
+        return `$${sign}${n}${varName}$`;
+      }
+      return `$${sign}\\frac{${n}}{${d}}${varName}$`;
+    }
 
-    // QUIZ 4: CORREGIDA PREGUNTA 5 Y 9 CON SINTAXIS EXACTA PARA KATEX
-    const quiz4Set1 = [
-      { type: 'single', q: "Reduce la siguiente expresión: $-8x + 3x - 5x$", options: ["$0$", "$-10x$", "$-6x$", "$10x$"], correct: 1, exp: "Calculamos los coeficientes: $-8 + 3 = -5$, y luego $-5 - 5 = -10$. Resultado: $-10x$." },
-      { type: 'single', q: "Reduce la siguiente expresión: $4a - 9b - 7a + 2b$", options: ["$-3a - 7b$", "$3a - 7b$", "$-3a + 11b$", "$-11a - 7b$"], correct: 0, exp: "Agrupamos $a$: $4a - 7a = -3a$. Agrupamos $b$: $-9b + 2b = -7b$. Resultado: $-3a - 7b$." },
-      { type: 'single', q: "Reduce la siguiente expresión: $-3y + \\frac{1}{2}y$", options: ["$-\\frac{5}{2}y$", "$-\\frac{7}{2}y$", "$-\\frac{2}{2}y$", "$\\frac{5}{2}y$"], correct: 0, exp: "Convertimos $-3$ a medios: $-\\frac{6}{2}$. Luego $-\\frac{6}{2} + \\frac{1}{2} = -\\frac{5}{2}$. Resultado: $-\\frac{5}{2}y$." },
-      { type: 'single', q: "Reduce la siguiente expresión: $5m^2 - 12m^2 + 4m^2$", options: ["$3m^2$", "$-3m^2$", "$-11m^2$", "$-m^2$"], correct: 1, exp: "Sumamos los coeficientes: $(5 - 12 + 4) = -3$. Resultado: $-3m^2$." },
-      { type: 'single', q: "Reduce la siguiente expresión: $\\frac{3}{4}x - \\frac{1}{4}x - 2x$", options: ["$-\\frac{3}{2}x$", "$-\\frac{1}{2}x$", "$-\\frac{3}{4}x$", "$-x$"], correct: 0, exp: "Restamos las fracciones: $\\frac{3}{4} - \\frac{1}{4} = \\frac{2}{4} = \\frac{1}{2}$. Luego $\\frac{1}{2} - 2 = -\\frac{3}{2}$. Resultado: $-\\frac{3}{2}x$." },
-      { type: 'single', q: "Reduce la siguiente expresión: $-6p + 10q - 4p - 15q$", options: ["$-10p - 5q$", "$2p - 5q$", "$-10p + 25q$", "$-2p - 5q$"], correct: 0, exp: "Términos con $p$: $-6p - 4p = -10p$. Términos con $q$: $10q - 15q = -5q$. Resultado: $-10p - 5q$." },
-      { type: 'single', q: "Reduce la siguiente expresión: $x - \\frac{2}{5}x$", options: ["$\\frac{3}{5}x$", "$-\\frac{3}{5}x$", "$\\frac{1}{5}x$", "$-\\frac{1}{5}x$"], correct: 0, exp: "Expresamos $1$ entero como $\\frac{5}{5}$: $\\frac{5}{5}x - \\frac{2}{5}x = \\frac{3}{5}x$." },
-      { type: 'single', q: "Reduce la siguiente expresión: $-2k^2 + 7k - 5k^2 - 11k$", options: ["$-7k^2 - 4k$", "$3k^2 - 4k$", "$-7k^2 + 18k$", "$-3k^2 - 18k$"], correct: 0, exp: "Agrupamos $k^2$: $-2 - 5 = -7$. Agrupamos $k$: $7 - 11 = -4$. Resultado: $-7k^2 - 4k$." },
-      { type: 'single', q: "Reduce la siguiente expresión: $\\frac{7}{10}w + \\frac{1}{10}w - w$", options: ["$-\\frac{1}{5}w$", "$\\frac{1}{5}w$", "$-\\frac{2}{5}w$", "$-\\frac{8}{10}w$"], correct: 0, exp: "Sumamos fracciones: $\\frac{7}{10} + \\frac{1}{10} = \\frac{8}{10}$. Restamos $1w$ ($\\frac{10}{10}w$): $\\frac{8}{10} - \\frac{10}{10} = -\\frac{2}{10} = -\\frac{1}{5}w$." },
-      { type: 'single', q: "Reduce la siguiente expresión: $-4ab + 9ab - 12ab + 2ab$", options: ["$-5ab$", "$5ab$", "$-15ab$", "$-3ab$"], correct: 0, exp: "Agrupamos positivos ($9+2 = 11$) y negativos ($-4-12 = -16$). Luego $11 - 16 = -5$. Resultado: $-5ab$." }
-    ];
+    // -------------------------------------------------------------
+    // GENERADORES DINÁMICOS Y ALEATORIOS PARA CADA EVALUACIÓN
+    // -------------------------------------------------------------
+
+    // GENERADOR EVALUACIÓN 1: ADICIÓN Y SUSTRACCIÓN DE ENTEROS
+    function generateQuiz1Set() {
+      const questions = [];
+      for (let i = 0; i < 10; i++) {
+        let n1 = (Math.floor(Math.random() * 25) - 12) || -5;
+        let n2 = (Math.floor(Math.random() * 25) - 12) || 7;
+        let isPlus = Math.random() > 0.5;
+
+        let ans = isPlus ? (n1 + n2) : (n1 - n2);
+        let opSymbol = isPlus ? "+" : "-";
+        let n2Str = n2 < 0 ? `(${n2})` : `${n2}`;
+
+        let correctOpt = `$${ans}$`;
+        let optsSet = new Set([correctOpt]);
+        let offsets = [-2, 2, -1, 1, 3, -3];
+        let idx = 0;
+        while (optsSet.size < 4) {
+          optsSet.add(`$${ans + offsets[idx++]}$`);
+        }
+
+        let shuffledOpts = Array.from(optsSet).sort(() => Math.random() - 0.5);
+
+        questions.push({
+          type: 'single',
+          q: `Calcula: $${n1} ${opSymbol} ${n2Str}$`,
+          options: shuffledOpts,
+          correct: shuffledOpts.indexOf(correctOpt),
+          exp: `Aplicando la regla de los signos para la adición/sustracción de enteros, el resultado es $${ans}$.`
+        });
+      }
+      return questions;
+    }
+
+    // GENERADOR EVALUACIÓN 2: MULTIPLICACIÓN Y DIVISIÓN DE ENTEROS
+    function generateQuiz2Set() {
+      const questions = [];
+      for (let i = 0; i < 10; i++) {
+        let isMult = Math.random() > 0.5;
+        let a = (Math.floor(Math.random() * 12) + 1) * (Math.random() > 0.5 ? 1 : -1);
+        let b = (Math.floor(Math.random() * 10) + 1) * (Math.random() > 0.5 ? 1 : -1);
+
+        let exprStr = "", ans = 0, expStr = "";
+
+        if (isMult) {
+          ans = a * b;
+          exprStr = `Calcula: $${a} \\cdot (${b})$`;
+          expStr = `Regla de signos para la multiplicación: ${a < 0 && b < 0 ? 'Negativo por negativo resulta positivo' : (a*b < 0 ? 'Signos distintos resultan en valor negativo' : 'Positivo por positivo resulta positivo')}. El resultado es $${ans}$.`;
+        } else {
+          ans = a;
+          let prod = a * b;
+          exprStr = `Calcula: $${prod} : (${b})$`;
+          expStr = `Regla de signos para la división: $${prod} : (${b}) = ${ans}$.`;
+        }
+
+        let correctOpt = `$${ans}$`;
+        let optsSet = new Set([correctOpt, `$${-ans}$`]);
+        let offsets = [-2, 2, -1, 1, 3, -3];
+        let idx = 0;
+        while (optsSet.size < 4) {
+          optsSet.add(`$${ans + offsets[idx++]}$`);
+        }
+
+        let shuffledOpts = Array.from(optsSet).sort(() => Math.random() - 0.5);
+
+        questions.push({
+          type: 'single',
+          q: exprStr,
+          options: shuffledOpts,
+          correct: shuffledOpts.indexOf(correctOpt),
+          exp: expStr
+        });
+      }
+      return questions;
+    }
+
+    // GENERADOR EVALUACIÓN 3: IDENTIFICACIÓN DE TÉRMINOS SEMEJANTES (SELECCIÓN MÚLTIPLE A-H)
+    function generateQuiz3Set() {
+      const baseLiterals = ["x^2y", "ab^3", "m^4n^2", "xyz^2", "w^3z^4", "cd^3e^2"];
+      const questions = [];
+
+      for (let i = 0; i < 10; i++) {
+        let lit = baseLiterals[i % baseLiterals.length];
+        let coefBase = (Math.floor(Math.random() * 10) - 5) || 3;
+        let baseTerm = `$${coefBase}${lit}$`;
+
+        let correctList = [];
+        let distractors = [];
+
+        // Crear 4 semejantes correctos
+        for (let c = 0; c < 4; c++) {
+          let coef = (Math.floor(Math.random() * 15) - 7) || 2;
+          correctList.push(`$${coef}${lit}$`);
+        }
+
+        // Crear 4 distractores
+        distractors.push(`$${coefBase}${lit.replace('2', '3')}$`);
+        distractors.push(`$${coefBase}${lit.slice(0, -1)}$`);
+        distractors.push(`$${coefBase}$`);
+        distractors.push(`$${coefBase}x$`);
+
+        let allOpts = [...correctList, ...distractors].sort(() => Math.random() - 0.5);
+        let correctIndices = [];
+        allOpts.forEach((opt, idx) => {
+          if (correctList.includes(opt)) correctIndices.push(idx);
+        });
+
+        questions.push({
+          type: 'multiple',
+          q: `Selecciona todas las alternativas que sean semejantes al término: ${baseTerm}`,
+          options: allOpts,
+          correct: correctIndices,
+          exp: `Los términos semejantes deben tener exactamente la misma factor literal: $${lit}$.`
+        });
+      }
+      return questions;
+    }
+
+    // GENERADOR EVALUACIÓN 4: REDUCCIÓN DE TÉRMINOS SEMEJANTES (ENTEROS Y FRACCIONES 2, 4, 5, 10)
+    function generateQuiz4Set() {
+      const vars = ['x', 'y', 'a', 'b', 'm', 'p', 'k', 'w'];
+      const denoms = [2, 4, 5, 10];
+      const questions = [];
+
+      for (let i = 0; i < 10; i++) {
+        const v = vars[Math.floor(Math.random() * vars.length)];
+        const mode = Math.random();
+
+        let numFinal = 0, denFinal = 1;
+        let exprStr = "", expText = "";
+
+        if (mode < 0.35) {
+          let n1 = (Math.floor(Math.random() * 15) - 7) || 2;
+          let n2 = (Math.floor(Math.random() * 15) - 7) || -3;
+          let n3 = (Math.floor(Math.random() * 15) - 7) || 4;
+
+          numFinal = n1 + n2 + n3;
+          denFinal = 1;
+
+          let s2 = n2 >= 0 ? ` + ${n2}` : ` - ${Math.abs(n2)}`;
+          let s3 = n3 >= 0 ? ` + ${n3}` : ` - ${Math.abs(n3)}`;
+          exprStr = `Reduce la siguiente expresión: $${n1}${v}${s2}${v}${s3}${v}$`;
+          expText = `Sumamos y restamos los coeficientes enteros: $(${n1} ${s2} ${s3}) = ${numFinal}$. Resultado: ${formatFrac(numFinal, 1, v)}.`;
+
+        } else if (mode < 0.70) {
+          let den = denoms[Math.floor(Math.random() * denoms.length)];
+          let numFrac = (Math.floor(Math.random() * 7) - 3) || 1;
+          let entero = (Math.floor(Math.random() * 8) - 4) || -2;
+
+          numFinal = entero * den + numFrac;
+          denFinal = den;
+
+          let fracStr = numFrac < 0 ? `- \\frac{${Math.abs(numFrac)}}{${den}}` : `+ \\frac{${numFrac}}{${den}}`;
+          exprStr = `Reduce la siguiente expresión: $${entero}${v} ${fracStr}${v}$`;
+          expText = `Convertimos $${entero}$ a fracción de denominador $${den}$: $\\frac{${entero * den}}{${den}}$. Luego sumamos: $\\frac{${entero * den}}{${den}} + \\frac{${numFrac}}{${den}} = \\frac{${numFinal}}{${den}}$.`;
+
+        } else {
+          let den = denoms[Math.floor(Math.random() * denoms.length)];
+          let nf1 = (Math.floor(Math.random() * 5) + 1);
+          let nf2 = (Math.floor(Math.random() * 5) + 1);
+          let entero = (Math.floor(Math.random() * 4) - 2) || -1;
+
+          numFinal = (nf1 + nf2) + (entero * den);
+          denFinal = den;
+
+          let sEnt = entero >= 0 ? `+ ${entero}` : `- ${Math.abs(entero)}`;
+          exprStr = `Reduce la siguiente expresión: $\\frac{${nf1}}{${den}}${v} + \\frac{${nf2}}{${den}}${v} ${sEnt}${v}$`;
+          expText = `Primero sumamos las fracciones: $\\frac{${nf1} + ${nf2}}{${den}} = \\frac{${nf1 + nf2}}{${den}}$. Luego operamos con el entero: resultado final ${formatFrac(numFinal, denFinal, v)}.`;
+        }
+
+        let correctOpt = formatFrac(numFinal, denFinal, v);
+        let optsSet = new Set([correctOpt]);
+
+        let offsets = [-2, 2, -1, 1, 3, -3];
+        let offIdx = 0;
+        while (optsSet.size < 4 && offIdx < offsets.length) {
+          let distractor = formatFrac(numFinal + offsets[offIdx], denFinal, v);
+          optsSet.add(distractor);
+          offIdx++;
+        }
+        while (optsSet.size < 4) {
+          let distractor = formatFrac(numFinal, denFinal + optsSet.size, v);
+          optsSet.add(distractor);
+        }
+
+        let shuffledOpts = Array.from(optsSet).sort(() => Math.random() - 0.5);
+        let correctIndex = shuffledOpts.indexOf(correctOpt);
+
+        questions.push({
+          type: 'single',
+          q: exprStr,
+          options: shuffledOpts,
+          correct: correctIndex,
+          exp: expText
+        });
+      }
+
+      return questions;
+    }
 
     // MÓDULOS DE 1RO MEDIO
     const modulesData = {
@@ -479,16 +650,16 @@
       currentQuizType = type;
       if (type === 1) {
         document.getElementById('quiz-header-title').innerText = "Regla de los Signos para la Adición";
-        activeQuestions = [...quiz1Set1];
+        activeQuestions = generateQuiz1Set(); // TODAS LAS EVALUACIONES GENERAN PREGUNTAS ALEATORIAS
       } else if (type === 2) {
         document.getElementById('quiz-header-title').innerText = "Multiplicación y División de Enteros";
-        activeQuestions = [...quiz2Set1];
+        activeQuestions = generateQuiz2Set();
       } else if (type === 3) {
         document.getElementById('quiz-header-title').innerText = "Identificación de Términos Semejantes";
-        activeQuestions = [...quiz3Set1];
+        activeQuestions = generateQuiz3Set();
       } else {
         document.getElementById('quiz-header-title').innerText = "Reducción de Términos Semejantes";
-        activeQuestions = [...quiz4Set1];
+        activeQuestions = generateQuiz4Set();
       }
 
       currentQIndex = 0;
