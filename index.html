@@ -9,8 +9,7 @@
   <!-- KATEX: PARA RENDERIZAR FRACCIONES VERTICALES -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-          onload="renderMathInElement(document.body);"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 </head>
 <body class="bg-slate-100 min-h-screen">
 
@@ -257,9 +256,9 @@
           <div id="quiz-progress-bar" class="bg-blue-600 h-full w-10 transition-all duration-300"></div>
         </div>
 
-        <p id="quiz-question" class="text-base sm:text-lg font-bold text-slate-800 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+        <div id="quiz-question" class="text-base sm:text-lg font-bold text-slate-800 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
           <!-- Texto de pregunta -->
-        </p>
+        </div>
 
         <!-- Opciones -->
         <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
@@ -317,7 +316,7 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // BANCOS DE PREGUNTAS (SINTAXIS LATEX FORMATO KATEX $...$)
+    // BANCOS DE PREGUNTAS (ESCAPADO DOBLE \\\\ CUIDADOSO)
     const quiz1Set1 = [
       { type: 'single', q: "Calcula: $-7 + (-4)$", options: ["$11$", "$-11$", "$-3$", "$3$"], correct: 1, exp: "Al sumar dos números negativos, se suman sus valores absolutos ($7 + 4 = 11$) y se conserva el signo negativo: $-11$." },
       { type: 'single', q: "Calcula: $12 + (-5)$", options: ["$17$", "$-7$", "$7$", "$-17$"], correct: 2, exp: "Al sumar números con distinto signo, se restan sus valores absolutos ($12 - 5 = 7$) y se deja el signo del mayor: $7$." },
@@ -357,17 +356,17 @@
       { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: $-2cd^3e^2$", options: ["$cd^3e^2$", "$-2c^3de^2$", "$5e^2d^3c$", "$-d^3e^2c$", "$\\frac{1}{4}ce^2d^3$", "$-2$", "$c^2d^3e^2$", "$-cd^3e^2$"], correct: [0, 2, 3, 4, 7], exp: "Factores literales: $c$, $d^3$ y $e^2$." }
     ];
 
-    // QUIZ 4: REDUCCIÓN CON FRACCIONES VERTICALES EN LATEX
+    // QUIZ 4: CORREGIDA PREGUNTA 5 Y 9 CON SINTAXIS EXACTA PARA KATEX
     const quiz4Set1 = [
       { type: 'single', q: "Reduce la siguiente expresión: $-8x + 3x - 5x$", options: ["$0$", "$-10x$", "$-6x$", "$10x$"], correct: 1, exp: "Calculamos los coeficientes: $-8 + 3 = -5$, y luego $-5 - 5 = -10$. Resultado: $-10x$." },
       { type: 'single', q: "Reduce la siguiente expresión: $4a - 9b - 7a + 2b$", options: ["$-3a - 7b$", "$3a - 7b$", "$-3a + 11b$", "$-11a - 7b$"], correct: 0, exp: "Agrupamos $a$: $4a - 7a = -3a$. Agrupamos $b$: $-9b + 2b = -7b$. Resultado: $-3a - 7b$." },
       { type: 'single', q: "Reduce la siguiente expresión: $-3y + \\frac{1}{2}y$", options: ["$-\\frac{5}{2}y$", "$-\\frac{7}{2}y$", "$-\\frac{2}{2}y$", "$\\frac{5}{2}y$"], correct: 0, exp: "Convertimos $-3$ a medios: $-\\frac{6}{2}$. Luego $-\\frac{6}{2} + \\frac{1}{2} = -\\frac{5}{2}$. Resultado: $-\\frac{5}{2}y$." },
       { type: 'single', q: "Reduce la siguiente expresión: $5m^2 - 12m^2 + 4m^2$", options: ["$3m^2$", "$-3m^2$", "$-11m^2$", "$-m^2$"], correct: 1, exp: "Sumamos los coeficientes: $(5 - 12 + 4) = -3$. Resultado: $-3m^2$." },
-      { type: 'single', q: "Reduce la siguiente expresión: $\\frac{3}{4}x - \\frac{1}{4}x - 2x$", options: ["$-\\frac{3}{2}x$", "$-\\frac{1}{2}x$", "$-\\frac{3}{4}x$", "$-x$"], correct: 0, exp: "Restamos las fracciones: $\\frac{3}{4} - \\frac{1}{4} = \\frac{2}{4} = \\frac{1}{2}$. Luego $\\frac{1}{2} - 2 = \\frac{1}{2} - \\frac{4}{2} = -\\frac{3}{2}$. Resultado: $-\\frac{3}{2}x$." },
+      { type: 'single', q: "Reduce la siguiente expresión: $\\frac{3}{4}x - \\frac{1}{4}x - 2x$", options: ["$-\\frac{3}{2}x$", "$-\\frac{1}{2}x$", "$-\\frac{3}{4}x$", "$-x$"], correct: 0, exp: "Restamos las fracciones: $\\frac{3}{4} - \\frac{1}{4} = \\frac{2}{4} = \\frac{1}{2}$. Luego $\\frac{1}{2} - 2 = -\\frac{3}{2}$. Resultado: $-\\frac{3}{2}x$." },
       { type: 'single', q: "Reduce la siguiente expresión: $-6p + 10q - 4p - 15q$", options: ["$-10p - 5q$", "$2p - 5q$", "$-10p + 25q$", "$-2p - 5q$"], correct: 0, exp: "Términos con $p$: $-6p - 4p = -10p$. Términos con $q$: $10q - 15q = -5q$. Resultado: $-10p - 5q$." },
       { type: 'single', q: "Reduce la siguiente expresión: $x - \\frac{2}{5}x$", options: ["$\\frac{3}{5}x$", "$-\\frac{3}{5}x$", "$\\frac{1}{5}x$", "$-\\frac{1}{5}x$"], correct: 0, exp: "Expresamos $1$ entero como $\\frac{5}{5}$: $\\frac{5}{5}x - \\frac{2}{5}x = \\frac{3}{5}x$." },
       { type: 'single', q: "Reduce la siguiente expresión: $-2k^2 + 7k - 5k^2 - 11k$", options: ["$-7k^2 - 4k$", "$3k^2 - 4k$", "$-7k^2 + 18k$", "$-3k^2 - 18k$"], correct: 0, exp: "Agrupamos $k^2$: $-2 - 5 = -7$. Agrupamos $k$: $7 - 11 = -4$. Resultado: $-7k^2 - 4k$." },
-      { type: 'single', q: "Reduce la siguiente expresión: \\frac{7}{10}w + \\frac{1}{10}w - w", options: ["$-\\frac{1}{5}w$", "$\\frac{1}{5}w$", "$-\\frac{2}{5}w$", "$-\\frac{8}{10}w$"], correct: 0, exp: "Sumamos fracciones: $\\frac{7}{10} + \\frac{1}{10} = \\frac{8}{10}$. Restamos $1w$ ($\\frac{10}{10}w$): $\\frac{8}{10} - \\frac{10}{10} = -\\frac{2}{10} = -\\frac{1}{5}w$." },
+      { type: 'single', q: "Reduce la siguiente expresión: $\\frac{7}{10}w + \\frac{1}{10}w - w$", options: ["$-\\frac{1}{5}w$", "$\\frac{1}{5}w$", "$-\\frac{2}{5}w$", "$-\\frac{8}{10}w$"], correct: 0, exp: "Sumamos fracciones: $\\frac{7}{10} + \\frac{1}{10} = \\frac{8}{10}$. Restamos $1w$ ($\\frac{10}{10}w$): $\\frac{8}{10} - \\frac{10}{10} = -\\frac{2}{10} = -\\frac{1}{5}w$." },
       { type: 'single', q: "Reduce la siguiente expresión: $-4ab + 9ab - 12ab + 2ab$", options: ["$-5ab$", "$5ab$", "$-15ab$", "$-3ab$"], correct: 0, exp: "Agrupamos positivos ($9+2 = 11$) y negativos ($-4-12 = -16$). Luego $11 - 16 = -5$. Resultado: $-5ab$." }
     ];
 
@@ -510,17 +509,19 @@
             delimiters: [
               {left: "$$", right: "$$", display: true},
               {left: "$", right: "$", display: false}
-            ]
+            ],
+            throwOnError: false
           });
         }
-      }, 50);
+      }, 30);
     }
 
     function renderQuestion() {
       const q = activeQuestions[currentQIndex];
       document.getElementById('quiz-progress-text').innerText = `Pregunta ${currentQIndex + 1} de ${activeQuestions.length}`;
       document.getElementById('quiz-progress-bar').style.width = `${((currentQIndex + 1) / activeQuestions.length) * 100}%`;
-      document.getElementById('quiz-question').innerText = q.q;
+      
+      document.getElementById('quiz-question').innerHTML = q.q;
 
       const optsContainer = document.getElementById('quiz-options');
       optsContainer.innerHTML = '';
@@ -535,7 +536,7 @@
         q.options.forEach((optText, index) => {
           const btn = document.createElement('button');
           btn.className = 'quiz-opt-btn w-full text-left px-4 py-3 border-2 border-slate-200 rounded-xl hover:border-blue-500 font-semibold text-slate-700 text-sm transition';
-          btn.innerText = `${String.fromCharCode(65 + index)})  ${optText}`;
+          btn.innerHTML = `${String.fromCharCode(65 + index)})  ${optText}`;
           btn.addEventListener('click', () => selectSingleAnswer(index));
           optsContainer.appendChild(btn);
         });
@@ -585,7 +586,7 @@
         feedbackText.innerText = 'Respuesta Incorrecta ❌';
       }
 
-      feedbackExp.innerText = q.exp;
+      feedbackExp.innerHTML = q.exp;
       feedbackBox.classList.remove('hidden');
       document.getElementById('btn-quiz-next').classList.remove('hidden');
 
@@ -616,7 +617,7 @@
         feedbackText.innerText = `Respuesta Incorrecta ❌. Las opciones correctas eran: ${correctLetters}`;
       }
 
-      feedbackExp.innerText = q.exp;
+      feedbackExp.innerHTML = q.exp;
       feedbackBox.classList.remove('hidden');
       document.getElementById('btn-quiz-next').classList.remove('hidden');
 
