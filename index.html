@@ -311,7 +311,7 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // BANCOS DE PREGUNTAS (QUIZ 1, 2 Y 3)
+    // BANCOS DE PREGUNTAS (QUIZ 1, 2, 3 Y 4)
     const quiz1Set1 = [
       { type: 'single', q: "Calcula: -7 + (-4)", options: ["11", "-11", "-3", "3"], correct: 1, exp: "Al sumar dos números negativos, se suman sus valores absolutos (7 + 4 = 11) y se conserva el signo negativo: -11." },
       { type: 'single', q: "Calcula: 12 + (-5)", options: ["17", "-7", "7", "-17"], correct: 2, exp: "Al sumar números con distinto signo, se restan sus valores absolutos (12 - 5 = 7) y se deja el signo del mayor: 7." },
@@ -351,6 +351,20 @@
       { type: 'multiple', q: "Selecciona todas las alternativas que sean semejantes a: -2cd³e²", options: ["cd³e²", "-2c³de²", "5e²d³c", "-d³e²c", "(1/4)ce²d³", "-2", "c²d³e²", "-cd³e²"], correct: [0, 2, 3, 4, 7], exp: "Factores literales: c, d³ y e²." }
     ];
 
+    // QUIZ 4: REDUCCIÓN DE TÉRMINOS SEMEJANTES (PAES - ENTEROS Y FRACCIONES 2, 4, 5, 10)
+    const quiz4Set1 = [
+      { type: 'single', q: "Reduce la siguiente expresión: -8x + 3x - 5x", options: ["0", "-10x", "-6x", "10x"], correct: 1, exp: "Calculamos los coeficientes: -8 + 3 = -5, y luego -5 - 5 = -10. Resultado: -10x." },
+      { type: 'single', q: "Reduce la siguiente expresión: 4a - 9b - 7a + 2b", options: ["-3a - 7b", "3a - 7b", "-3a + 11b", "-11a - 7b"], correct: 0, exp: "Agrupamos 'a': 4a - 7a = -3a. Agrupamos 'b': -9b + 2b = -7b. Resultado: -3a - 7b." },
+      { type: 'single', q: "Reduce la siguiente expresión: -3y + (1/2)y", options: ["-(5/2)y", "-(7/2)y", "-(2/2)y", "(5/2)y"], correct: 0, exp: "Convertimos -3 a medios: -6/2. Luego -6/2 + 1/2 = -5/2. Resultado: -(5/2)y." },
+      { type: 'single', q: "Reduce la siguiente expresión: 5m² - 12m² + 4m²", options: ["3m²", "-3m²", "-11m²", "-m²"], correct: 1, exp: "Sumamos los coeficientes: (5 - 12 + 4) = -3. Resultado: -3m²." },
+      { type: 'single', q: "Reduce la siguiente expresión: (3/4)x - (1/4)x - 2x", options: ["-(3/2)x", "-(1/2)x", "-(3/4)x", "-x"], correct: 0, exp: "Restamos las fracciones: 3/4 - 1/4 = 2/4 = 1/2. Luego 1/2 - 2 = 1/2 - 4/2 = -3/2. Resultado: -(3/2)x." },
+      { type: 'single', q: "Reduce la siguiente expresión: -6p + 10q - 4p - 15q", options: ["-10p - 5q", "2p - 5q", "-10p + 25q", "-2p - 5q"], correct: 0, exp: "Términos con 'p': -6p - 4p = -10p. Términos con 'q': 10q - 15q = -5q. Resultado: -10p - 5q." },
+      { type: 'single', q: "Reduce la siguiente expresión: x - (2/5)x", options: ["(3/5)x", "-(3/5)x", "(1/5)x", "-(1/5)x"], correct: 0, exp: "Expresamos 1 entero como 5/5: 5/5x - 2/5x = (3/5)x." },
+      { type: 'single', q: "Reduce la siguiente expresión: -2k² + 7k - 5k² - 11k", options: ["-7k² - 4k", "3k² - 4k", "-7k² + 18k", "-3k² - 18k"], correct: 0, exp: "Agrupamos k²: -2 - 5 = -7. Agrupamos k: 7 - 11 = -4. Resultado: -7k² - 4k." },
+      { type: 'single', q: "Reduce la siguiente expresión: (7/10)w + (1/10)w - w", options: ["-(1/5)w", "(1/5)w", "-(2/5)w", "-(8/10)w"], correct: 0, exp: "Sumamos fracciones: 7/10 + 1/10 = 8/10. Restamos 1w (10/10w): 8/10 - 10/10 = -2/10 = -1/5w." },
+      { type: 'single', q: "Reduce la siguiente expresión: -4ab + 9ab - 12ab + 2ab", options: ["-5ab", "5ab", "-15ab", "-3ab"], correct: 0, exp: "Agrupamos positivos (9+2 = 11) y negativos (-4-12 = -16). Luego 11 - 16 = -5. Resultado: -5ab." }
+    ];
+
     // MÓDULOS DE 1RO MEDIO
     const modulesData = {
       mod1: { tag: "Módulo 01", title: "Módulo 1: Números", desc: "Aprende operaciones fundamentales.", oas: [] },
@@ -388,13 +402,20 @@
 
                   <a href="https://drive.google.com/file/d/13FwJPgItioQBNvCcukHvCcVJq93wIuy2/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 5° Términos algebraicos semejantes ↗</a>
 
-                  <!-- EVALUACIÓN 3 (8 ALTERNATIVAS) -->
+                  <!-- EVALUACIÓN 3 -->
                   <button class="btn-start-quiz-3 w-full inline-flex items-center justify-between bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold text-xs px-4 py-3.5 rounded-xl transition shadow-md my-1">
                     <span class="flex items-center gap-2">📝 Evaluación Interactiva N°3: Términos Semejantes</span>
                     <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px]">8 Opciones (A-H)</span>
                   </button>
 
                   <a href="https://drive.google.com/file/d/1hwjM8wRil98UA3AIsFUV96_BGl4G3SK0/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 6° Reducción de términos semejantes ↗</a>
+
+                  <!-- EVALUACIÓN 4 (NUEVA - TRAS EL 6TO RECURSO) -->
+                  <button class="btn-start-quiz-4 w-full inline-flex items-center justify-between bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs px-4 py-3.5 rounded-xl transition shadow-md my-1">
+                    <span class="flex items-center gap-2">📝 Evaluación Interactiva N°4: Reducción de Términos Semejantes</span>
+                    <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px]">10 Ejercicios PAES</span>
+                  </button>
+
                   <a href="https://drive.google.com/file/d/1mQqAjblOAozFnWsu5tTbAgOGLrBllceG/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 7° Propiedades de las potencias ↗</a>
                   <a href="https://drive.google.com/file/d/1q13YPnvCzgVbRn4L7EwcB3mulHffGLw2/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 8° Propiedad distributiva ↗</a>
                   <a href="https://drive.google.com/file/d/1oNlMqHIpKMHApwTUFO36Drq16yzaa9MQ/view?usp=drive_link" target="_blank" class="w-full inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-3 rounded-xl transition shadow-sm">🎥 9° Productos notables - término común ↗</a>
@@ -457,9 +478,12 @@
       } else if (type === 2) {
         document.getElementById('quiz-header-title').innerText = "Multiplicación y División de Enteros";
         activeQuestions = [...quiz2Set1];
-      } else {
+      } else if (type === 3) {
         document.getElementById('quiz-header-title').innerText = "Identificación de Términos Semejantes";
         activeQuestions = [...quiz3Set1];
+      } else {
+        document.getElementById('quiz-header-title').innerText = "Reducción de Términos Semejantes";
+        activeQuestions = [...quiz4Set1];
       }
 
       currentQIndex = 0;
@@ -497,7 +521,7 @@
           optsContainer.appendChild(btn);
         });
       } else {
-        // Opción múltiple con 8 alternativas
+        // Opción múltiple con checkboxes
         optsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6";
         document.getElementById('btn-quiz-check').classList.remove('hidden');
         q.options.forEach((optText, index) => {
@@ -674,6 +698,7 @@
       if (e.target && e.target.closest('.btn-start-quiz-1')) { attemptCount = 1; startQuiz(1); }
       if (e.target && e.target.closest('.btn-start-quiz-2')) { attemptCount = 1; startQuiz(2); }
       if (e.target && e.target.closest('.btn-start-quiz-3')) { attemptCount = 1; startQuiz(3); }
+      if (e.target && e.target.closest('.btn-start-quiz-4')) { attemptCount = 1; startQuiz(4); }
 
       // Comprobar Respuesta Múltiple
       if (e.target && e.target.id === 'btn-quiz-check') { checkMultipleAnswer(); }
